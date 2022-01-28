@@ -1,0 +1,110 @@
+.options {
+     background-color: white;
+     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+     padding: 20px 40px;
+     border-radius: 5px;
+     display: flex;
+     flex-direction: column;
+}
+.option-item {
+     text-align: center;
+     padding: 10px 10px;
+     border-radius: 42px;
+     margin-bottom: 20px;
+     &.active {
+          background-color: rgb(133, 197, 89);
+          color: white;
+     }
+}
+
+.content-list {
+     display: none;
+     .content-item {
+          background-color: $main-color;
+          border-radius: 20px;
+          position: relative;
+          cursor: pointer;
+     }
+     & img {
+          width: 178px;
+          height: 178px;
+     }
+     .check-icon {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background-color: rgb(133, 197, 89);
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          & img {
+               width: 20px;
+               height: 20px;
+               object-fit: cover;
+          }
+     }
+}
+.eyes, .headdress, .phone, .mouth, .clothes, .accessories, .background {
+     &.active {
+          display: grid;
+     }
+}
+.create-nft {
+     display: grid;
+     grid-template-columns: 1fr 2fr 1fr;
+     grid-gap: 30px;
+     &-button {
+          margin-top: 30px;
+          padding: 10px 20px;
+     }
+}
+
+
+.preview-avatar {
+     text-align: center;
+     .preview-main {
+          border-radius: 20px;
+          padding: 16px;
+          box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+          position: relative;
+          overflow: visible;
+     }
+     .preview-content {
+          width: 300px;
+          height: 300px;
+          overflow: hidden;
+          background-color: $main-color;
+          position: relative;
+          & img {
+               position: absolute;
+               top: 0;
+               left: 0;
+               width: 100%;
+               height: 100%;
+               &::after {
+                    content: "";
+                    display: block;
+                    padding-top: 100%;
+               }
+          }
+     }
+     .preview-image {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 300px;
+          height: 300px;
+     }
+}
+.mouth-user {
+     z-index: 5;
+     object-fit: cover;
+     width: 20.80979284369115% !important;
+     height: 21.468926553672315% !important;
+     transform: rotate(0);
+     top: 180px !important;
+     left: 180px !important;
+}

@@ -1,0 +1,31 @@
+.my-nft {
+     &-list {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-gap: 20px;
+     }
+     &-item {
+          border: 1px solid rgb(229, 232, 235);
+          border-radius: 10px;
+          overflow: hidden;
+          background-color: rgb(255, 255, 255);
+     }
+     &-action {
+          margin-top: 20px;
+          display: flex;
+     }
+     &-name {
+          color: rgb(112, 122, 131);
+          font-weight: 500;
+          font-size: 18px;
+     }
+     &-tokenId {
+          color: rgb(53, 56, 64);
+          font-weight: 600;
+          font-size: 16px;
+          margin-top: 10px;
+     }
+     .card-body {
+          padding: 15px 20px;
+     }
+}

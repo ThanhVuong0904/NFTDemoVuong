@@ -1,0 +1,317 @@
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+button {
+  display: inline-block;
+  outline: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn {
+  padding: 10px;
+}
+
+p {
+  margin-bottom: 0 !important;
+}
+
+.btn-primary {
+  background-color: #4267b2;
+  border: 1px solid transparent;
+  color: white;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+.btn-primary:hover {
+  border: 1px solid #4267b2;
+  background-color: white;
+  color: #4267b2;
+}
+
+a {
+  text-decoration: none;
+  color: unset;
+}
+
+#app {
+  background-image: url("../assets/images/bg.jpg");
+  background-position: center;
+  background-size: cover;
+  height: 100vh;
+}
+
+.btn-logout {
+  outline: none;
+  border: none;
+  background-color: #DC3545;
+  padding: 10px 15px;
+  color: white;
+}
+
+.container {
+  max-width: 1240px;
+  width: 100%;
+  padding: 0 20px;
+  margin: auto;
+}
+
+.d-grid-col-3 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 20px 10px;
+}
+
+.d-grid-col-4 {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.z-index2 {
+  z-index: 2;
+}
+
+.word-wrap {
+  word-wrap: break-word;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.eth-logo {
+  width: 20px;
+  height: 20px;
+}
+
+.header {
+  height: 100px;
+  background-color: white;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+          box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.header .container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+}
+
+.header-menu {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.header-menu-item {
+  padding: 10px;
+  margin-right: 15px;
+  color: white;
+  background-color: #4267b2;
+}
+
+.options {
+  background-color: white;
+  -webkit-box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+          box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 20px 40px;
+  border-radius: 5px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.option-item {
+  text-align: center;
+  padding: 10px 10px;
+  border-radius: 42px;
+  margin-bottom: 20px;
+}
+
+.option-item.active {
+  background-color: #85c559;
+  color: white;
+}
+
+.content-list {
+  display: none;
+}
+
+.content-list .content-item {
+  background-color: #f6fff0;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+}
+
+.content-list img {
+  width: 178px;
+  height: 178px;
+}
+
+.content-list .check-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #85c559;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.content-list .check-icon img {
+  width: 20px;
+  height: 20px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.eyes.active, .headdress.active, .phone.active, .mouth.active, .clothes.active, .accessories.active, .background.active {
+  display: -ms-grid;
+  display: grid;
+}
+
+.create-nft {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 2fr 1fr;
+      grid-template-columns: 1fr 2fr 1fr;
+  grid-gap: 30px;
+}
+
+.create-nft-button {
+  margin-top: 30px;
+  padding: 10px 20px;
+}
+
+.preview-avatar {
+  text-align: center;
+}
+
+.preview-avatar .preview-main {
+  border-radius: 20px;
+  padding: 16px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+          box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  position: relative;
+  overflow: visible;
+}
+
+.preview-avatar .preview-content {
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  background-color: #f6fff0;
+  position: relative;
+}
+
+.preview-avatar .preview-content img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-avatar .preview-content img::after {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+
+.preview-avatar .preview-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 300px;
+}
+
+.mouth-user {
+  z-index: 5;
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 20.80979284369115% !important;
+  height: 21.468926553672315% !important;
+  -webkit-transform: rotate(0);
+          transform: rotate(0);
+  top: 180px !important;
+  left: 180px !important;
+}
+
+.my-nft-list {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1fr)[4];
+      grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px;
+}
+
+.my-nft-item {
+  border: 1px solid #e5e8eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.my-nft-action {
+  margin-top: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.my-nft-name {
+  color: #707a83;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.my-nft-tokenId {
+  color: #353840;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.my-nft .card-body {
+  padding: 15px 20px;
+}
+/*# sourceMappingURL=style.css.map */
