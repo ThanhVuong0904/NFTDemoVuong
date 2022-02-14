@@ -9,8 +9,8 @@ import NTFContextProvider from './contexts/NFTContext'
 ReactDOM.render(
   <React.StrictMode>
     <MoralisProvider 
-      appId='kQJqujThIlZAvRLPNW93pc9kzerMobgBIIN5JVn3' 
-      serverUrl='https://shlprjquhmo7.usemoralis.com:2053/server'
+      appId='HAt228GcLgvnI0KgJEmOveGba3ZG5bNsGAdpaKcC' 
+      serverUrl='https://cgemtoilkcy1.usemoralis.com:2053/server'
     >
       <NTFContextProvider>
         <App />

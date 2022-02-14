@@ -1,0 +1,18 @@
+.nft-detail {
+     &-image {
+          width: 45%;
+          padding-right: 10px;
+     }
+     &-images {
+          width: 65%;
+          padding-left: 10px;
+     }
+     padding-bottom: 70px;
+     border-bottom: 1px solid #e5e8eb;
+     &-parent {
+          padding-top: 40px;
+     }
+}
+.opacity {
+     opacity: 0.3;
+}

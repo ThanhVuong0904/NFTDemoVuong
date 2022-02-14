@@ -7,6 +7,9 @@ img {
      max-width: 100%;
      object-fit: cover;
 }
+.w100 {
+     width: 100%;
+}
 button {
      display: inline-block;
      outline: none;
@@ -57,6 +60,11 @@ a {
      padding: 0 20px;
      margin: auto;
 }
+.d-grid-col-2 {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     grid-gap: 20px;
+}
 .d-grid-col-3 {
      display: grid;
      grid-template-columns: 1fr 1fr 1fr;
@@ -79,4 +87,39 @@ a {
 .eth-logo {
      width: 20px;
      height: 20px;
+}
+.d-none {
+     display: none;
+}
+.word-wrap {
+     display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-width: 500px;
+    text-align: center
+}
+.border-blue {
+     border: 5px solid blue;
+}
+.d-grid {
+     display: grid;
+}
+.g-col-3 {
+     grid-template-columns: 1fr 1fr 1fr;
+}
+.grid-gap-10 {
+     grid-gap: 10px;
+}
+.bg-frag {
+     position: absolute;
+     opacity: 0.5;
+}
+$numbers: (0, 1, 2, 3, 4, 5, 6, 7, 8);
+@each $val in $numbers {
+     .grid-col-#{$val} {
+          grid-template-columns: repeat($val,1fr);
+     }
 }

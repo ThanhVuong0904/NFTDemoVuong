@@ -1,22 +1,58 @@
 export const TestAbi = [
 	{
-		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
 				"internalType": "uint256",
-				"name": "listingId",
+				"name": "tokenId",
 				"type": "uint256"
 			},
 			{
-				"indexed": false,
 				"internalType": "address",
-				"name": "seller",
+				"name": "tokenAddress",
 				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "askingPrice",
+				"type": "uint256"
 			}
 		],
-		"name": "Cancel",
-		"type": "event"
+		"name": "addItemToMarket",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "buyItem",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "cancelItem",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -24,20 +60,8 @@ export const TestAbi = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "listingId",
+				"name": "id",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "seller",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
 			},
 			{
 				"indexed": false,
@@ -47,12 +71,18 @@ export const TestAbi = [
 			},
 			{
 				"indexed": false,
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint256",
-				"name": "price",
+				"name": "askingPrice",
 				"type": "uint256"
 			}
 		],
-		"name": "Listed",
+		"name": "itemAdded",
 		"type": "event"
 	},
 	{
@@ -61,7 +91,7 @@ export const TestAbi = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "listingId",
+				"name": "id",
 				"type": "uint256"
 			},
 			{
@@ -72,103 +102,32 @@ export const TestAbi = [
 			},
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"indexed": false,
 				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "price",
+				"name": "askingPrice",
 				"type": "uint256"
 			}
 		],
-		"name": "Sale",
+		"name": "itemSold",
 		"type": "event"
 	},
 	{
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "listingId",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "buyToken",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "listingId",
-				"type": "uint256"
-			}
-		],
-		"name": "cancel",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "listingId",
-				"type": "uint256"
-			}
-		],
-		"name": "getListing",
+		"name": "itemsForSale",
 		"outputs": [
 			{
-				"components": [
-					{
-						"internalType": "enum Market.ListingStatus",
-						"name": "status",
-						"type": "uint8"
-					},
-					{
-						"internalType": "address",
-						"name": "seller",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "token",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "price",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct Market.Listing",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
 			{
 				"internalType": "address",
-				"name": "token",
+				"name": "tokenAddress",
 				"type": "address"
 			},
 			{
@@ -177,14 +136,22 @@ export const TestAbi = [
 				"type": "uint256"
 			},
 			{
+				"internalType": "address payable",
+				"name": "seller",
+				"type": "address"
+			},
+			{
 				"internalType": "uint256",
-				"name": "price",
+				"name": "askingPrice",
 				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "isSold",
+				"type": "bool"
 			}
 		],
-		"name": "listToken",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]

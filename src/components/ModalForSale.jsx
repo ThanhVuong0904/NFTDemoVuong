@@ -1,8 +1,8 @@
-import React, { useContext, useState} from 'react'
+import React, { useContext } from 'react'
 import { Modal, Button, Form} from 'react-bootstrap'
 import { NFTContext } from '../contexts/NFTContext'
 export default function ModalForSale({onBuyNFT}) {
-     const {showForSale, setShowForSale, askingPrice, setAskingPrice, itemForSale} = useContext(NFTContext)
+     const {showForSale, setShowForSale,setItemForSale, itemForSale} = useContext(NFTContext)
      const handleClose = () => {
           setShowForSale(false)
      }
@@ -22,8 +22,8 @@ export default function ModalForSale({onBuyNFT}) {
                               <Form.Control 
                                    type="number" 
                                    name='price'
-                                   value={askingPrice} 
-                                   onChange={(e) => setAskingPrice(e.target.value)}
+                                   value={itemForSale.price} 
+                                   onChange={(e) => setItemForSale({...itemForSale, price: e.target.value})}
                               />
                          </Form.Group>
                     </Modal.Body>

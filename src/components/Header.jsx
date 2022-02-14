@@ -32,7 +32,7 @@ export default function Header({account, onLogOut}) {
                               ))
                          }
                     </div>
-                    <h3>Wellcome <span>{account}</span></h3>
+                    <h3 className='word-wrap'><span>{account}</span></h3>
                     <div className="header-action">
                          <button className="btn-logout" onClick={onLogOut}>Logout</button>
                     </div>

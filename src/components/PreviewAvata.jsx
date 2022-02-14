@@ -1,21 +1,19 @@
 import React, { useState, useContext, useRef} from 'react'
 import { NFTContext } from '../contexts/NFTContext'
 // import { contractABI } from '../abi'
-import { abiMYTOKENTV } from '../abiContract'
+import { NFTAPI } from '../abiContract'
+import { TOKEN_CONTRACT_ADDRESS } from '../constants/address'
 import {Moralis} from 'moralis'
 import { useMoralisFile } from 'react-moralis'
 import axios from 'axios'
+import { useEffect } from 'react'
 
 export default function PreviewAvata() {
-     // Old
-     const CONTRACT_ADDRESS = '0x955276a71b0C3928309DCd0A84fe2080EA11Ade9'
-     //New contract
-     const MYTOKENTV = '0xb58722a57AB337e0ed3e159168182546f14da997'
      const {
           saveFile,
      } = useMoralisFile();
      //Id bây giờ không quan trọng, chỉ dùng để đặt tên cho hình
-     const [id, setId] = useState(25)
+     
      const [rotate, setRotate] = useState(0)
      const refRorate = useRef(null)
      const {
@@ -32,111 +30,165 @@ export default function PreviewAvata() {
           result, web3Api, account
      } = useContext(NFTContext)
      const createNFT = async () => {
-          // if(backgroundByUser.boolean) {
-          //      //Upload background to IPFS
-          //      const backgroundFileImage = await new saveFile("background.png", backgroundByUser.file, {saveIPFS: true})
-          //      console.log("Background by user",backgroundFileImage._ipfs);
-          //      //Composite Image
-          //      const composite = await axios.post('http://localhost:5000/composite', 
-          //           {result: result ,id: id, backgroundByUser: backgroundFileImage._ipfs}
-          //      )
-          //      console.log("composite",composite);
-          //      if(composite.data.success) {
-          //           //Upload image composite to IPFS
-          //           const res = await axios.post('http://localhost:5000/uploadImage', 
-          //                {id: id}
-          //           )
-          //           console.log("Upload image composite to IFPS",res);
-          //           //Create Metadata
-          //           if(res.data.success) {
-          //                const metadata = { image: res.data.image };
-          //                const nftFileMetadataFile = new Moralis.File(
-          //                     "metadata.json", 
-          //                     {
-          //                          base64 : btoa(JSON.stringify(metadata))
-          //                     }
-          //                );
-          //                await nftFileMetadataFile.saveIPFS();
-          //                const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
-          //                console.log("metadata",nftFileMetadataFilePath);
-          //                const contract = await new web3Api.web3.eth.Contract(abiMYTOKENTV, MYTOKENTV)
-          //                const receipt = await contract.methods.createItem(nftFileMetadataFilePath).send({from: account})
-          //                console.log("receipt",receipt);
-          //           }
-          //      }
-          // }
-          // else {
-          //      const composite = await axios.post('http://localhost:5000/composite', 
-          //           {result: result ,id: id}
-          //      )
-          //      console.log(composite);
-          //      if(composite.data.success) {
-          //           const res = await axios.post('http://localhost:5000/uploadImage', 
-          //                {id: id}
-          //           )
-          //           console.log(res);
-          //           if(res.data.success) {
-          //                const metadata = { image: res.data.image };
-          //                const nftFileMetadataFile = new Moralis.File(
-          //                     "metadata.json", 
-          //                     {
-          //                          base64 : btoa(JSON.stringify(metadata))
-          //                     }
-          //                );
-          //                await nftFileMetadataFile.saveIPFS();
-          //                const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
-          //                console.log("metadata",nftFileMetadataFilePath);
-          //                const contract = await new web3Api.web3.eth.Contract(abiMYTOKENTV, MYTOKENTV)
-          //                const receipt = await contract.methods.createItem(nftFileMetadataFilePath).send({from: account})
-          //                console.log("receipt",receipt);
-          //           }
-          //      }
-          // }
-          const mouthFileImage = await new saveFile("mouth.png", mouthByUser.file, {saveIPFS: true})
-          console.log("mouth by user",mouthFileImage._ipfs);
-
-          const removeBg = await axios.post('http://localhost:5000/removeBackground', {mouthByUser: mouthFileImage._ipfs})
-          console.log(removeBg);
-          if(removeBg.data.success) {
-               setMouthByUser({
-                    ...mouthByUser,
-                    image: removeBg.data.image,
-               })
-               const handleMouthImage = await axios.post(
-                    'http://localhost:5000/handleMouthImage', 
-                    {rotate, mouthImage: removeBg.data.image}
+          if(backgroundByUser.boolean && !mouthByUser.boolean) {
+               //Upload background to IPFS
+               const backgroundFileImage = await new saveFile("background.png", backgroundByUser.file, {saveIPFS: true})
+               console.log("Background by user",backgroundFileImage._ipfs);
+               //Composite Image
+               const composite = await axios.post('http://localhost:5000/composite', 
+                    {result: result , backgroundByUser: backgroundFileImage._ipfs}
                )
-               console.log("handleMouthImage",handleMouthImage);
-               if(handleMouthImage.data.success) {
-                    
-                    const composite = await axios.post('http://localhost:5000/composite', 
-                         {result: result ,id: id, mouthByUser: true}
-                    )
-                    console.log("composite",composite);
-                    if(composite.data.success) {
-                         const res = await axios.post('http://localhost:5000/uploadImage', 
-                              {id: id}
-                         )
-                         console.log(res);
-                         if(res.data.success) {
-                              const metadata = { image: res.data.image };
-                              const nftFileMetadataFile = new Moralis.File(
-                                   "metadata.json", 
-                                   {
-                                        base64 : btoa(JSON.stringify(metadata))
-                                   }
-                              );
-                              await nftFileMetadataFile.saveIPFS();
-                              const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
-                              console.log("metadata",nftFileMetadataFilePath);
-                              const contract = await new web3Api.web3.eth.Contract(abiMYTOKENTV, MYTOKENTV)
-                              const receipt = await contract.methods.createItem(nftFileMetadataFilePath).send({from: account})
-                              console.log("receipt",receipt);
-                         }
+               console.log("composite image",composite);
+               if(composite.data.success) {
+                    //Upload image composite to IPFS
+                    const res = await axios.post('http://localhost:5000/uploadImage')
+                    console.log("Upload image composite to IFPS",res);
+                    //Create Metadata
+                    if(res.data.success) {
+                         const metadata = { 
+                              image: res.data.image,
+                              parentTokenId: 0,
+                         };
+                         const nftFileMetadataFile = new Moralis.File(
+                              "metadata.json", 
+                              {
+                                   base64 : btoa(JSON.stringify(metadata))
+                              }
+                         );
+                         await nftFileMetadataFile.saveIPFS();
+                         const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
+                         console.log("metadata",nftFileMetadataFilePath);
+                         const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
+                         const receipt = await contract.methods.createNFT(nftFileMetadataFilePath, 0).send({from: account})
+                         console.log("receipt",receipt);
                     }
                }
-          }        
+          }
+          else if(mouthByUser.boolean && !backgroundByUser.boolean) {
+               const mouthFileImage = await new saveFile("mouth.png", mouthByUser.file, {saveIPFS: true})
+               console.log("mouth by user",mouthFileImage._ipfs);
+
+               const removeBg = await axios.post('http://localhost:5000/removeBackground', {mouthByUser: mouthFileImage._ipfs})
+               console.log(removeBg);
+               if(removeBg.data.success) {
+                    setMouthByUser({
+                         ...mouthByUser,
+                         image: removeBg.data.image,
+                    })
+                    const handleMouthImage = await axios.post(
+                         'http://localhost:5000/handleMouthImage', 
+                         {rotate, mouthImage: removeBg.data.image}
+                    )
+                    console.log("handleMouthImage",handleMouthImage);
+                    if(handleMouthImage.data.success) {
+                         const composite = await axios.post('http://localhost:5000/composite', 
+                              {result: result , mouthByUser: true}
+                         )
+                         console.log("composite",composite);
+                         if(composite.data.success) {
+                              const res = await axios.post('http://localhost:5000/uploadImage')
+                              console.log(res);
+                              if(res.data.success) {
+                                   const metadata = { 
+                                        image: res.data.image,
+                                        parentTokenId: 0,
+                                   };
+                                   const nftFileMetadataFile = new Moralis.File(
+                                        "metadata.json", 
+                                        {
+                                             base64 : btoa(JSON.stringify(metadata))
+                                        }
+                                   );
+                                   await nftFileMetadataFile.saveIPFS();
+                                   const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
+                                   console.log("metadata",nftFileMetadataFilePath);
+                                   const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
+                                   const receipt = await contract.methods.createNFT(nftFileMetadataFilePath,0).send({from: account})
+                                   console.log("receipt",receipt);
+                              }
+                         }
+                    }
+               }  
+          }
+          else if(backgroundByUser.boolean && mouthByUser.boolean) {
+               const backgroundFileImage = await new saveFile("background.png", backgroundByUser.file, {saveIPFS: true})
+               console.log("Background by user",backgroundFileImage._ipfs);
+
+               const mouthFileImage = await new saveFile("mouth.png", mouthByUser.file, {saveIPFS: true})
+               console.log("mouth by user",mouthFileImage._ipfs);
+               const removeBg = await axios.post('http://localhost:5000/removeBackground', {mouthByUser: mouthFileImage._ipfs})
+               console.log(removeBg);
+               if(removeBg.data.success) {
+                    setMouthByUser({
+                         ...mouthByUser,
+                         image: removeBg.data.image,
+                    })
+                    const handleMouthImage = await axios.post(
+                         'http://localhost:5000/handleMouthImage', 
+                         {rotate, mouthImage: removeBg.data.image}
+                    )
+                    console.log("handleMouthImage",handleMouthImage);
+                    if(handleMouthImage.data.success) {
+                         const composite = await axios.post('http://localhost:5000/composite', 
+                              {result: result , mouthByUser: true, backgroundByUser: backgroundFileImage._ipfs}
+                         )
+                         console.log("composite",composite);
+                         if(composite.data.success) {
+                              const res = await axios.post('http://localhost:5000/uploadImage')
+                              console.log(res);
+                              if(res.data.success) {
+                                   const metadata = { 
+                                        image: res.data.image,
+                                        parentTokenId: 0,
+                                   };
+                                   const nftFileMetadataFile = new Moralis.File(
+                                        "metadata.json", 
+                                        {
+                                             base64 : btoa(JSON.stringify(metadata))
+                                        }
+                                   );
+                                   await nftFileMetadataFile.saveIPFS();
+                                   const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
+                                   console.log("metadata",nftFileMetadataFilePath);
+                                   const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
+                                   const receipt = await contract.methods.createNFT(nftFileMetadataFilePath,0).send({from: account})
+                                   console.log("receipt",receipt);
+                              }
+                         }
+                    }
+               }  
+
+          }
+          else {
+               const composite = await axios.post('http://localhost:5000/composite', 
+                    {result: result}
+               )
+               console.log("composite",composite);
+               if(composite.data.success) {
+                    const res = await axios.post('http://localhost:5000/uploadImage')
+                    console.log("upload image",res);
+                    if(res.data.success) {
+                         const metadata = { 
+                              image: res.data.image,
+                              parentTokenId: 0,
+                         };
+                         const nftFileMetadataFile = new Moralis.File(
+                              "metadata.json", 
+                              {
+                                   base64 : btoa(JSON.stringify(metadata))
+                              }
+                         );
+                         await nftFileMetadataFile.saveIPFS();
+                         const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
+                         console.log("metadata",nftFileMetadataFilePath);
+                         const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
+                         const receipt = await contract.methods.createNFT(nftFileMetadataFilePath,0).send({from: account})
+                         console.log("receipt",receipt);
+                    }
+               }
+          }
      }
+
      const handleRemoveBg = async () => {
           const mouthFileImage = await new saveFile("mouth.png", mouthByUser.file, {saveIPFS: true})
           console.log("mouth by user",mouthFileImage._ipfs);
@@ -155,6 +207,7 @@ export default function PreviewAvata() {
           console.log("Xoay",e.target.value);
           refRorate.current.style.transform = `rotate(${e.target.value}deg)`
      }
+
      return (
           <div className="preview-avatar">
                <p>Xoay hình</p> 

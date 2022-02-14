@@ -53,8 +53,20 @@ const NFTContextProvider = ({children}) => {
           web3: null,
      })
      const [showForSale, setShowForSale] = useState(false)
-     const [askingPrice, setAskingPrice] = useState()
-     const [itemForSale, setItemForSale] = useState(null)
+     const [showPreparingFragNFTInfo, setShowPreparingFragNFTInfo] = useState(false)
+
+     const [preparingFragNFTInfo, setPreparingFragNFTInfo] = useState({
+          tokenId: null,
+          image: null,
+          qtyFrag: '',
+          arrayImages: null,
+     })
+     
+     const [itemForSale, setItemForSale] = useState({
+          tokenId: null,
+          image: null,
+          price: 0
+     })
      const [backgroundByUser, setBackgroundByUser] = useState({
           boolean: false,
           image: null,
@@ -71,7 +83,7 @@ const NFTContextProvider = ({children}) => {
           file: null,
      })
      const { 
-		authenticate, isAuthenticated, user, 
+		authenticate, isAuthenticated, user, isInitialized,
           account, logout, isWeb3Enabled, enableWeb3
 	} = useMoralis();
      //Eye, Headdress...
@@ -187,13 +199,14 @@ const NFTContextProvider = ({children}) => {
           BACKGROUND, background, setBackground,
           backgroundByUser, setBackgroundByUser,
           result, setResult,
-          authenticate, isAuthenticated, user,
+          authenticate, isAuthenticated, user,isInitialized,
           web3Api , account , logout, isWeb3Enabled, enableWeb3,
           phoneByUser, setPhoneByUser,
           mouthByUser, setMouthByUser,
           showForSale, setShowForSale,
-          askingPrice, setAskingPrice,
-          itemForSale, setItemForSale
+          itemForSale, setItemForSale,
+          preparingFragNFTInfo, setPreparingFragNFTInfo,
+          showPreparingFragNFTInfo, setShowPreparingFragNFTInfo,
      }
      
      

@@ -122,8 +122,9 @@ const PORT = process.env.PORT || 5000
 app.use(cors())
 
 // https://shlprjquhmo7.usemoralis.com
+
 app.post('/composite', async (req, response) => {
-     const {result, id, backgroundByUser, mouthByUser} = req.body
+     const {result, backgroundByUser, mouthByUser} = req.body
      console.log("mouth",mouthByUser);
      console.log("background",backgroundByUser);
      var images = []
@@ -132,7 +133,7 @@ app.post('/composite', async (req, response) => {
           if(backgroundByUser !== undefined) {
                res({image: backgroundByUser})
           }
-          res(BACKGROUND.find(item => item.id === result.background))
+          else res(BACKGROUND.find(item => item.id === result.background))
      })
      images.push(backgroundPromise.then(data => data))
      //EYE
@@ -167,17 +168,16 @@ app.post('/composite', async (req, response) => {
 
      //MOUTH
      const mouthPromise = new Promise((res, rej) => {
-          if(mouthByUser) {
+          if(mouthByUser !== undefined) {
                res({image: './src/final-images/compositeMouthWithBgTransparent.png'})
           }
-          res(MOUTH.find(item => item.id === result.mouth))
+          else res(MOUTH.find(item => item.id === result.mouth))
      })
      images.push(mouthPromise.then(data => data))
 
      Promise.all(images).then(data => {
           var jimps = []
 
-          console.log("This is ID", id);
           //JimpRead image
           for (var i = 0; i < data.length; i++) {
                jimps.push(Jimp.read(data[i].image));
@@ -187,6 +187,7 @@ app.post('/composite', async (req, response) => {
           Promise.all(jimps).then(function() {
                return Promise.all(jimps);
           }).then(async function(image) {
+               console.log(image);
                // image[0] = background
                // image[1] = eye
                // image[2] = headdress
@@ -203,11 +204,11 @@ app.post('/composite', async (req, response) => {
                image[0].composite(image[5],0,0);
                image[0].composite(image[6],0,0);
                //Write Image
-               image[0].write(`./src/final-images/${id}.png`,async (data) => {
+               image[0].write(`./src/final-images/successComposite.png`,async (data) => {
                     console.log("Wrote the image final");
                     return response.json({success: true, message: "Composite Image"})
                })
-          });
+          }).catch(error => console.log("LOI", error));
           
      })
 })
@@ -241,6 +242,7 @@ app.post('/handleMouthImage', async (req, res) => {
                return res.json({success: true, message: "handle mouth"})
           })
      })
+     
 })
 app.post('/removeBackground', async (req, res) => {
      const {mouthByUser} = req.body
@@ -248,7 +250,7 @@ app.post('/removeBackground', async (req, res) => {
      
      removeBackgroundFromImageUrl({
           url: mouthByUser,
-          apiKey: "xHtpBHdfwYUdif4k9tgNvQPY",
+          apiKey: "sFNM1S37Ux52PANjATP2BCsc",
           size: "regular",
           type: "person",
           outputFile 
@@ -291,20 +293,20 @@ app.post('/removeBackground', async (req, res) => {
                })
           })
      }).catch((errors) => {
-          console.log(JSON.stringify(errors));
+          console.log("Lỗi",JSON.stringify(errors));
      });
 
 })
 
 app.post('/uploadImage', async (req, res) => {
-     const {id} = req.body
+     //const {id} = req.body
      let ipfsArray = [];
      let promises = [];
      promises.push( new Promise( (res, rej) => {
-          fs.readFile(`./src/final-images/${id}.png`, (err, data) => {
+          fs.readFile(`./src/final-images/successComposite.png`, (err, data) => {
                if (err) rej()
                ipfsArray.push({
-                    path: `images/${id}.png`,
+                    path: `images/composite.png`,
                     content: data.toString("base64")
                })
                res()
@@ -322,12 +324,13 @@ app.post('/uploadImage', async (req, res) => {
                     }
                }
           ).then( (response) => {
-               console.log(response.data);
+               console.log("path",response.data);
                return res.json({success: true, image: response.data[0].path})
           })
           .catch ( (error) => {
-               console.log(error)
+               console.log("lloi",error)
           })
      })
 })
+
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`))

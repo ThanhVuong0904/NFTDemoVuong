@@ -1,4 +1,5 @@
 .my-nft {
+     padding-bottom: 50px;
      &-list {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -23,9 +24,38 @@
           color: rgb(53, 56, 64);
           font-weight: 600;
           font-size: 16px;
-          margin-top: 10px;
      }
-     .card-body {
-          padding: 15px 20px;
+     .more-options {
+          background: linear-gradient(rgba(229, 232, 235, 0.392) 0%, rgb(255, 255, 255) 20%);
+          padding: 5px 1rem;
+          cursor: pointer;
+          position: relative;
+          &-list {
+               &.active{
+                    display: block;
+               }
+               display: none;
+               position: absolute;
+               border-radius: 5px;
+               background-color: white;
+               font-weight: 600;
+               font-size: 14px;
+               color: rgb(4, 17, 29);
+               bottom: 50px;
+               width: 80%;
+               box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+          }
+          &-item {
+               border-bottom: 1px solid rgb(229, 232, 235);
+               padding: 1rem;
+               cursor: pointer;
+               transition: all 0.2s linear;
+               &:hover {
+                    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+               }
+          }
      }
+}
+.flex-1 {
+     flex: 1;
 }
