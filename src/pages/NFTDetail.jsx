@@ -43,6 +43,7 @@ export default function NFTDetail() {
                     const queryNFTsChild = new Moralis.Query('CreateNFTs')
                     queryNFTsChild.equalTo('parentTokenId', id)
                     const resultQueryNFTsChild = await queryNFTsChild.find()
+                    console.log("ok con de");
                     const imageChild = await Promise.all(resultQueryNFTsChild.map(async item => {
                          const response = await fetch(item.attributes.uri)
                          const data = await response.json()
@@ -61,7 +62,7 @@ export default function NFTDetail() {
                          image: resThisImage.image,
                          imageChild: imageChild,
                          amountFrag: resultQueryNFT.attributes.amountFrag,
-                         amountFragOfParent: resultQueryNFTParent.attributes.amountFrag,
+                         // amountFragOfParent: resultQueryNFTParent.attributes.amountFrag,
                          isFrag: resultQueryNFT.attributes.isFrag,
                          parentTokenId: resultQueryNFT.attributes.parentTokenId,
                     })
@@ -144,7 +145,7 @@ export default function NFTDetail() {
                          {
                               NFTDetail.imageChild.map(item => 
                                    <div 
-                                        key = {item.tokenId}
+                                        // key = {item.image}
                                         className={
                                              `
                                                   ${item.nftOwner !== account ? 'opacity' : ''}
@@ -169,7 +170,7 @@ export default function NFTDetail() {
                          {
                               NFTDetail.imageSameParent.map(item => 
                                    <div 
-                                        key = {item.tokenId}
+                                        // key = {item.image}
                                         className={`
                                              ${item.nftOwner !== account && 'opacity'} 
                                              ${item.tokenId === id && 'border-blue'}`
