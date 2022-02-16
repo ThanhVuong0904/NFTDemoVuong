@@ -16,6 +16,7 @@ export default function NFTDetail() {
           imageParent: '',
           isFrag: null,
           amountFrag: '',
+          amountFragOfParent: '',
           parentTokenId: '',
           imageSameParent:[],
           imageChild: []
@@ -60,6 +61,7 @@ export default function NFTDetail() {
                          image: resThisImage.image,
                          imageChild: imageChild,
                          amountFrag: resultQueryNFT.attributes.amountFrag,
+                         amountFragOfParent: resultQueryNFTParent.attributes.amountFrag,
                          isFrag: resultQueryNFT.attributes.isFrag,
                          parentTokenId: resultQueryNFT.attributes.parentTokenId,
                     })
@@ -110,6 +112,7 @@ export default function NFTDetail() {
                          imageSameParent: imageSameParent,
                          imageChild: imageChild,
                          amountFrag: resultQueryNFT.attributes.amountFrag,
+                         amountFragOfParent: resultQueryNFTParent.attributes.amountFrag,
                          isFrag: resultQueryNFT.attributes.isFrag,
                          parentTokenId: resultQueryNFT.attributes.parentTokenId,
                          imageParent: resImageParent.image
@@ -137,7 +140,7 @@ export default function NFTDetail() {
                          <p>NFT này chưa phân mảnh</p>}
                          
                     </div>
-                    <div className="nft-detail-images d-grid grid-col-2 grid-gap-10">
+                    <div className={`nft-detail-images d-grid grid-col-${Math.sqrt(NFTDetail.amountFrag)} grid-gap-10`}>
                          {
                               NFTDetail.imageChild.map(item => 
                                    <div 
@@ -159,8 +162,10 @@ export default function NFTDetail() {
                <div className='nft-detail-parent d-flex'>
                     <div className="nft-detail-image">
                          <img src={NFTDetail.imageParent} alt="" />
+                         <p>Token ID: {NFTDetail.parentTokenId}</p>
+                         <p>Số lượng phân mảnh: {NFTDetail.amountFragOfParent}</p>
                     </div>
-                    <div className="nft-detail-images d-grid grid-col-2 grid-gap-10">
+                    <div className={`nft-detail-images d-grid grid-col-${Math.sqrt(NFTDetail.amountFragOfParent)} grid-gap-10`}>
                          {
                               NFTDetail.imageSameParent.map(item => 
                                    <div 

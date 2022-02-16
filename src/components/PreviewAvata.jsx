@@ -38,7 +38,7 @@ export default function PreviewAvata() {
                const composite = await axios.post('http://localhost:5000/composite', 
                     {result: result , backgroundByUser: backgroundFileImage._ipfs}
                )
-               console.log("composite image",composite);
+               console.log("composite background",composite);
                if(composite.data.success) {
                     //Upload image composite to IPFS
                     const res = await axios.post('http://localhost:5000/uploadImage')
@@ -84,7 +84,7 @@ export default function PreviewAvata() {
                          const composite = await axios.post('http://localhost:5000/composite', 
                               {result: result , mouthByUser: true}
                          )
-                         console.log("composite",composite);
+                         console.log("composite mouth",composite);
                          if(composite.data.success) {
                               const res = await axios.post('http://localhost:5000/uploadImage')
                               console.log(res);
@@ -132,7 +132,7 @@ export default function PreviewAvata() {
                          const composite = await axios.post('http://localhost:5000/composite', 
                               {result: result , mouthByUser: true, backgroundByUser: backgroundFileImage._ipfs}
                          )
-                         console.log("composite",composite);
+                         console.log("composite background mouth",composite);
                          if(composite.data.success) {
                               const res = await axios.post('http://localhost:5000/uploadImage')
                               console.log(res);
@@ -163,7 +163,7 @@ export default function PreviewAvata() {
                const composite = await axios.post('http://localhost:5000/composite', 
                     {result: result}
                )
-               console.log("composite",composite);
+               console.log("composite basic",composite);
                if(composite.data.success) {
                     const res = await axios.post('http://localhost:5000/uploadImage')
                     console.log("upload image",res);

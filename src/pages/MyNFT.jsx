@@ -36,6 +36,8 @@ export default function MyNFT() {
           console.log(owner);
           fetchData(owner)
      }
+     
+
      const fetchData = async (userNFT) => {
           userNFT.map(async (item, index) => {
                console.log(item);
@@ -43,30 +45,22 @@ export default function MyNFT() {
                //Nếu đang bán thì gán uid = id ở trong market
                //Nếu đang bán thì tìm kiếm giá đang bán gán vào price
                const itemForSale = new Moralis.Query('ItemsForSale')
-               itemForSale.equalTo('tokenAddress', TOKEN_CONTRACT_ADDRESS)
+               itemForSale.equalTo('tokenId', item.tokenId)
                const result = await itemForSale.first()
                console.log(result);
-
-               //Kiểm tra xem NFT này đã được aprrove vào market này chưa
-               const contractToken = new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS);
-               const approvedAddress = await contractToken.methods.getApproved(item.tokenId).call({from: account});
-               //Nếu được approve rồi thì có nghĩa là đang bán, gán onSale = true
-               //Nếu chưa thì ngược lại
-               const isApprove = approvedAddress === MARKET_CONTRACT_ADDRESS ? true : false
+               
                await fetch(item.tokenUri)
                .then(res => res.json())
                .then(data => setMyNFT(prev => 
                     [
                          ...prev, 
                          {
-                              // uid: result && result.attributes.tokenId === item.tokenId && result.attributes.uid,
-                              uid: item.uid,
+                              uid: result && result.attributes.tokenId === item.tokenId && result.attributes.uid,
+                              // uid: item.uid,
                               tokenId: item.tokenId,
                               symbol: item.symbol,
                               image: data.image,
                               name: item.name,
-                              onSale: isApprove,
-                              marketPlace: approvedAddress,
                               price: result && result.attributes.tokenId === item.tokenId && result.attributes.askingPrice,
                               isFrag: item.isFrag,
                               amountFrag: item.amountFrag,
@@ -82,7 +76,8 @@ export default function MyNFT() {
           setShowForSale(true)
           //Check xem đã approve chưa, nếu chưa thì approve
           //Nếu rồi thì rao bán
-          await ensureMarketplaceIsApproved(itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS)
+          await ensureMarketplaceIsApproved()
+          
           const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
           const priceToWei = await web3Api.web3.utils.toWei(itemForSale.price)
           //Add NFT vào market
@@ -102,26 +97,17 @@ export default function MyNFT() {
      const handleCancelSale = async (nft) => {
           console.log(nft);
           const contractMarket = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
-          const contractToken = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-          const approvedAddress = await contractToken.methods.getApproved(nft.tokenId).call({from: account})
-          const receipt = await contractMarket.methods.cancel(nft.uid, nft.tokenId).send({from: account});
+          const receipt = await contractMarket.methods.cancel(nft.uid).send({from: account});
           console.log(receipt);
-          console.log(approvedAddress);
-          //Nếu NFT đang approve cho market này, thì có nghĩa là đang bán
-          //Hủy approve = cách approve cho address zero
-          if(approvedAddress === MARKET_CONTRACT_ADDRESS) {
-               const cancelApprove = await contractToken.methods.approve("0x0000000000000000000000000000000000000000" ,nft.tokenId).send({from: account});
-               console.log(cancelApprove);
-          }
-          
      }
-     const ensureMarketplaceIsApproved = async (tokenId, tokenAddress) => {
-          const contract = new web3Api.web3.eth.Contract(NFTAPI, tokenAddress);
-          const approvedAddress = await contract.methods.getApproved(tokenId).call({from: account});
-          console.log("approvedAddress", approvedAddress);
-          if (approvedAddress != MARKET_CONTRACT_ADDRESS){
-              const approve = await contract.methods.approve(MARKET_CONTRACT_ADDRESS,tokenId).send({from: account});
-              console.log("approve", approve);
+
+     const ensureMarketplaceIsApproved = async () => {
+          const contractToken = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS);
+          console.log("contractToken", contractToken);
+          const approvedAddress = await contractToken.methods.isApprovedForAll(account, MARKET_CONTRACT_ADDRESS).call({from: account});
+          console.log(approvedAddress);
+          if (!approvedAddress){
+               const approveAll = await contractToken.methods.setApprovalForAll(MARKET_CONTRACT_ADDRESS, true).send({from: account})
           }
      }
      const showMoreOptionList = (index) => {
@@ -142,14 +128,12 @@ export default function MyNFT() {
      }
      const handleCutImage = async (item, index) => {
           console.log(item, preparingFragNFTInfo);
-          const querySelect = document.querySelector(`image-${index}`)
-          console.log(querySelect);
           var image = new Image
           image.crossOrigin = "anonymous"
           image.src = item.image
 
-          
           var imagePieces = [];
+          var imageResize = []
           if(preparingFragNFTInfo.qtyFrag === '4') {
                console.log("ok");
           }
@@ -186,20 +170,32 @@ export default function MyNFT() {
                          canvas.height,
                          canvas.width, 
                     );
-                    const myPromise = new Promise( 
-                         (res, rej) => res(canvas.toDataURL())
-                    )
-                    imagePieces.push(myPromise)
+                    compressImage(canvas.toDataURL(), image.naturalWidth, image.naturalHeight)
+                    .then((compressed) => {
+                         return imageResize.push(compressed)
+                    })
+                    .then(() => setPreparingFragNFTInfo({
+                         ...preparingFragNFTInfo,
+                         arrayImages: imageResize
+                    }))
                }
           }
-          Promise.all(imagePieces).then(async (data) => {
-               console.log(data);
-               // setCutImages(data)
-               setPreparingFragNFTInfo({
-                    ...preparingFragNFTInfo,
-                    arrayImages: data
-               })
-          })
+     }
+     function compressImage(src, newX, newY) {
+          return new Promise((res, rej) => {
+               const img = new Image();
+               img.src = src;
+               img.onload = () => {
+                    const elem = document.createElement("canvas");
+                    elem.width = newX;
+                    elem.height = newY;
+                    const ctx = elem.getContext("2d");
+                    ctx.drawImage(img, 0, 0, newX, newY);
+                    const data = ctx.canvas.toDataURL();
+                    res(data);
+               };
+               img.onerror = (error) => rej(error);
+          });
      }
      const handleFrag = async () => {
           console.log(preparingFragNFTInfo);
@@ -279,7 +275,7 @@ export default function MyNFT() {
                                         <p className='my-nft-name'>{item.name}</p>
                                         <div className="d-flex align-items-center justify-content-between">
                                              <p className='my-nft-tokenId'>{item.tokenId}</p>
-                                             {item.onSale 
+                                             {item.price 
                                              ? 
                                              <div className='d-flex align-items-center'>
                                                   <p className='text-secondary fw-600'>{(item.price / 1e18).toFixed(5)}</p>
@@ -295,7 +291,7 @@ export default function MyNFT() {
                                              ${isShowMoreOptions.bool && isShowMoreOptions.index === index ? 'active' : ''}`}
                                         >
                                              {
-                                                  !item.onSale && 
+                                                  !item.price && 
                                                   <div 
                                                        className='more-options-item' 
                                                        onClick={() => handleForSale(item)}
@@ -303,8 +299,18 @@ export default function MyNFT() {
                                                        Rao bán
                                                   </div>
                                              }
+                                             <a 
+                                                  href={`https://testnets.opensea.io/assets/0x0bd9e2249f7d0b14dbb45985d5ce027739a6269c/${item.tokenId}`}
+                                                  target='_blank'
+                                             >
+                                                  <div 
+                                                       className='more-options-item'
+                                                  >
+                                                       Rao bán trên OpenSea
+                                                  </div>
+                                             </a>
                                              {
-                                                  item.onSale && 
+                                                  item.price && 
                                                   <div 
                                                        className='more-options-item'
                                                        onClick={() => handleCancelSale(item)}

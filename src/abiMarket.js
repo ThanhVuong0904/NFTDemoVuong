@@ -39,12 +39,7 @@ export const MarketplaceABI = [
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "listingId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "id",
 				"type": "uint256"
 			}
 		],
@@ -59,7 +54,7 @@ export const MarketplaceABI = [
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "listingId",
+				"name": "id",
 				"type": "uint256"
 			},
 			{
@@ -67,18 +62,6 @@ export const MarketplaceABI = [
 				"internalType": "uint256",
 				"name": "tokenId",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "caller",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "tokenAddress",
-				"type": "address"
 			}
 		],
 		"name": "Cancel",
@@ -107,21 +90,9 @@ export const MarketplaceABI = [
 			},
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "approveAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
 				"internalType": "uint256",
 				"name": "askingPrice",
 				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "onSale",
-				"type": "bool"
 			}
 		],
 		"name": "ItemAdded",
@@ -138,14 +109,8 @@ export const MarketplaceABI = [
 			},
 			{
 				"indexed": false,
-				"internalType": "address",
-				"name": "buyer",
-				"type": "address"
-			},
-			{
-				"indexed": false,
 				"internalType": "uint256",
-				"name": "askingPrice",
+				"name": "tokenId",
 				"type": "uint256"
 			}
 		],
@@ -178,11 +143,6 @@ export const MarketplaceABI = [
 				"type": "address"
 			},
 			{
-				"internalType": "address",
-				"name": "approveAddress",
-				"type": "address"
-			},
-			{
 				"internalType": "address payable",
 				"name": "seller",
 				"type": "address"
@@ -191,11 +151,30 @@ export const MarketplaceABI = [
 				"internalType": "uint256",
 				"name": "askingPrice",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
 			},
 			{
-				"internalType": "bool",
-				"name": "onSale",
-				"type": "bool"
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ownerOf",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",

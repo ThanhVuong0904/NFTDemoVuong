@@ -7,11 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 contract Marketplace {
     struct AuctionItem {
         uint256 id;
-        address tokenAddress;
         uint256 tokenId;
+        address tokenAddress;
         address payable seller;
         uint256 askingPrice;
-        bool onSale;
     }
 
     //AuctionItem[] public itemsForSale;
@@ -19,9 +18,14 @@ contract Marketplace {
 
     uint256 _listingId = 0;
 
-    event ItemAdded(uint256 id, uint256 tokenId, address tokenAddress, uint256 askingPrice, bool onSale);
-    event ItemSold(uint256 id, address buyer, uint256 askingPrice);
-    event Cancel(uint256 listingId, uint256 tokenId ,address caller, address tokenAddress);
+    event ItemAdded(uint256 id, uint256 tokenId, address tokenAddress, uint256 askingPrice);
+    event ItemSold(uint256 id, uint256 tokenId);
+    event Cancel(uint256 id, uint256 tokenId);
+
+    function ownerOf(address tokenAddress, uint256 tokenId) public view  returns (address) {
+        IERC721 tokenContract = IERC721(tokenAddress);
+        return tokenContract.ownerOf(tokenId);
+    }
 
     modifier OnlyItemOwner(address tokenAddress, uint256 tokenId){
         IERC721 tokenContract = IERC721(tokenAddress);
@@ -40,39 +44,31 @@ contract Marketplace {
         _;
     }
 
-    modifier IsForSale(uint256 id){
-        require(_auctionItem[id].onSale == false, "Item is already sold!");
-        _;
-    }
 
-    function addItemToMarket(uint256 tokenId, address tokenAddress, uint256 askingPrice) OnlyItemOwner(tokenAddress,tokenId) HasTransferApproval(tokenAddress,tokenId) external {
+    function addItemToMarket(uint256 tokenId, address tokenAddress, uint256 askingPrice) OnlyItemOwner(tokenAddress,tokenId)  external {
         
-        _auctionItem[_listingId] = AuctionItem(_listingId, tokenAddress, tokenId, payable(msg.sender), askingPrice, true);
-        //++ id truoc nen no luu vao event sai
+        _auctionItem[_listingId] = AuctionItem(_listingId, tokenId, tokenAddress, payable(msg.sender), askingPrice);
+        emit ItemAdded(_listingId, tokenId, tokenAddress, askingPrice);
         _listingId++;
-        emit ItemAdded(_listingId, tokenId, tokenAddress, askingPrice, true);
     }
 
-    function buyItem(uint256 id) payable external HasTransferApproval(_auctionItem[id].tokenAddress,_auctionItem[id].tokenId){
+
+    function buyItem(uint256 id) payable external {
         require(msg.value >= _auctionItem[id].askingPrice, "Not enough funds sent");
         require(msg.sender != _auctionItem[id].seller);
 
-        _auctionItem[id].onSale = false;
 
 
         IERC721(_auctionItem[id].tokenAddress).safeTransferFrom(_auctionItem[id].seller, msg.sender, _auctionItem[id].tokenId);
         
         _auctionItem[id].seller.transfer(msg.value);
 
-        emit ItemSold(id, msg.sender,_auctionItem[id].askingPrice);
+        emit ItemSold(id, _auctionItem[id].tokenId);
     }
-    function cancel(uint256 listingId, uint256 tokenId) public HasTransferApproval(_auctionItem[listingId].tokenAddress, _auctionItem[listingId].tokenId){
 
-		_auctionItem[listingId].onSale = false;
-	
-        IERC721 tokenContract = IERC721(_auctionItem[listingId].tokenAddress);
-		tokenContract.approve(0x0000000000000000000000000000000000000000, tokenId);
+    function cancel(uint256 id) public{
 
-		emit Cancel(listingId, tokenId, msg.sender, _auctionItem[listingId].tokenAddress);
+		emit Cancel(id, _auctionItem[id].tokenId);
 	}
+
 }
