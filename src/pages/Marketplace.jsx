@@ -39,7 +39,7 @@ export default function Marketplace() {
           console.log(uid ,tokenId, price);
           const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
           const receipt = 
-               await contract.methods.buyItem(0).send({from: account, value: 600000000000000})
+               await contract.methods.buyItem(uid).send({from: account, value: price})
           console.log("buyItem",receipt);
      }
      useEffect(() => {
