@@ -13,60 +13,41 @@
 Contract được viết trên https://remix.ethereum.org/ và đã Deploy
 
 
-Contract address: `0xb58722a57AB337e0ed3e159168182546f14da997`
-
-ABI của contract được lưu ở `./src/abiContract.js`
-
-```
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
-
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-
-contract MyTokenTV is ERC721, Ownable {
-    using Counters for Counters.Counter;
-    struct Item {
-        uint256 id;
-        address creator;
-        string uri;
-    }
-    mapping (uint256 => Item) public Items;
-    Counters.Counter private _tokenIdCounter;
-
-    constructor() ERC721("MyTokenTV", "MTKTV") {}
-
-    function createItem(string memory uri) public returns (uint256){
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(msg.sender, tokenId);
-
-        Items[tokenId] = Item(tokenId, msg.sender, uri);
-
-        return tokenId;
-    }
-
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-
-       return Items[tokenId].uri;
-    }
-}
-```
-
 
 
 ## Run App
 
 Đề chạy dự án cần làm như sau
-- Mở terminal và gõ lệnh
+1. Mở terminal và gõ lệnh
 
 `npm start` 
 
-- Mở thêm 1 terminal nữa để chạy file `server.js` bằng cách
+2. Mở thêm 1 terminal nữa để chạy file `server.js` bằng cách
 
 `node server`
 
 ![image](https://user-images.githubusercontent.com/68543789/150733579-7f89c575-87bf-4df2-b885-3b6a06ea9675.png)
+
+
+3. git clone https://github.com/boypro0409/FaceSwap và chạy dòng lệnh
+
+`py main.py`
+
+![image](https://user-images.githubusercontent.com/68543789/154912171-20654c52-5c18-4c87-a1d2-00a87bfe9f70.png)
+
+4. Bước tiếp theo tải ngrok từ https://ngrok.com/
+
+5. Chạy file ngrok.exe `ngrok http 7777`
+
+![image](https://user-images.githubusercontent.com/68543789/154912738-83126949-0388-4254-a465-c4203cd4879c.png)
+
+6. Coppy 1 trong 2 đường link
+
+![image](https://user-images.githubusercontent.com/68543789/154912887-83b650c4-adae-4de9-a22b-9de6d3d9ad83.png)
+
+7. Mở file `./src/pages/SwapFace.jsx` và dán đường link đó vào
+
+![image](https://user-images.githubusercontent.com/68543789/154913051-206bebd6-749c-4ced-a3b8-063e27e1eb22.png)
+
+
 
