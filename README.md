@@ -9,6 +9,14 @@
 
 
 
+## Yêu cầu cài đặt
+- Python verson 3.7.0
+- `pip install dlib`
+- `pip install Flask`
+- `pip install Flask-Cors`
+- `pip install opencv-python`
+- `pip install urllib3`
+
 
 ## Run App
 
