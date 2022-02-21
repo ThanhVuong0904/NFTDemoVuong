@@ -244,6 +244,7 @@ app.post('/handleMouthImage', async (req, res) => {
      })
      
 })
+
 app.post('/removeBackground', async (req, res) => {
      const {mouthByUser} = req.body
      const outputFile = `./src/final-images/no-bg.png`;
@@ -296,6 +297,44 @@ app.post('/removeBackground', async (req, res) => {
           console.log("Lỗi",JSON.stringify(errors));
      });
 
+})
+
+app.get('/swapFace', async(req, res) => {
+     let promises = [];
+     let ipfsArray = []
+     promises.push( new Promise( (res, rej) => {
+          fs.readFile('./src/userupload/output6_7.jpg', (err, data) => {
+               if (err) rej()
+               ipfsArray.push({
+                    path: `images/output6_7.jpg`,
+                    content: data.toString("base64")
+               })
+               res()
+          })
+     }) )
+     //Push Image to IPFS
+     Promise.all(promises).then(() => {
+          axios.post("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", 
+               ipfsArray,
+               {
+                    headers: {
+                         "X-API-KEY": 'k30Du9VUUJbgHG6db8QItgxGryCNwcw0KhZ1tfZz86e1LlabB44y1sMwEwqprYPr',
+                         "Content-Type": "application/json",
+                         "accept": "application/json"
+                    }
+               }
+          ).then( (response) => {
+               console.log(response.data);
+               return res.json({
+                    success: true, 
+                    image: response.data[0].path,
+                    message: 'Swapface'
+               })
+          })
+          .catch ( (error) => {
+               console.log(error)
+          })
+     })
 })
 
 app.post('/uploadImage', async (req, res) => {

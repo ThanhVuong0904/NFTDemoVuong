@@ -35,6 +35,34 @@ export default function Marketplace() {
                ))
           })
      }
+     useEffect(() => {
+          const test = async () => {
+               const query = new Moralis.Query("ItemsForSale");
+               query.select("uid","askingPrice","tokenAddress","tokenId", "token.token_uri", "token.symbol","token.owner_of","token.id");
+  
+    const queryResults = await query.find();
+    console.log(queryResults);
+    const results = [];
+    for (let i = 0; i < queryResults.length; ++i) {
+  
+     // if (!queryResults[i].attributes.token || !queryResults[i].attributes.user) continue;
+ 
+     results.push({
+       "uid": queryResults[i].attributes.uid,
+       "tokenId": queryResults[i].attributes.tokenId,
+       "tokenAddress": queryResults[i].attributes.tokenAddress,
+       "price": queryResults[i].attributes.askingPrice,
+ 
+       "symbol": queryResults[i].attributes.token.attributes.symbol,
+       "tokenUri": queryResults[i].attributes.token.attributes.token_uri,
+       "ownerOf": queryResults[i].attributes.token.attributes.owner_of,
+       "tokenObjectId": queryResults[i].attributes.token.id,
+     });
+   }
+   console.log("Result", results);
+          }
+          test()
+     }, [])
      const handleBuyNFT = async (uid ,tokenId, price) => {
           console.log(uid ,tokenId, price);
           const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)

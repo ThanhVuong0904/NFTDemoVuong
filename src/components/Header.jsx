@@ -13,6 +13,10 @@ const mainNav = [
           display: "Market",
           path: "/market-place"
      },
+     {
+          display: "SwapFace",
+          path: "/swap-face"
+     },
 ]
 export default function Header({account, onLogOut}) {
      return (

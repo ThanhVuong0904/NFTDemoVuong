@@ -72,6 +72,12 @@ const NFTContextProvider = ({children}) => {
           image: null,
           file: null,
      })
+     const [faceByUser, setFaceByUser] = useState({
+          boolean: false,
+          image: null,
+          file: null,
+     })
+     
      const [phoneByUser, setPhoneByUser] = useState({
           boolean: false,
           image: null,
@@ -84,7 +90,7 @@ const NFTContextProvider = ({children}) => {
      })
      const { 
 		authenticate, isAuthenticated, user, isInitialized,
-          account, logout, isWeb3Enabled, enableWeb3
+          account, logout, isWeb3Enabled, enableWeb3, isAuthenticating, isUnauthenticated
 	} = useMoralis();
      //Eye, Headdress...
      const [options, setOptions] = useState(1)
@@ -199,10 +205,11 @@ const NFTContextProvider = ({children}) => {
           BACKGROUND, background, setBackground,
           backgroundByUser, setBackgroundByUser,
           result, setResult,
-          authenticate, isAuthenticated, user,isInitialized,
+          authenticate, isAuthenticated, user,isInitialized, isAuthenticating, isUnauthenticated,
           web3Api , account , logout, isWeb3Enabled, enableWeb3,
           phoneByUser, setPhoneByUser,
           mouthByUser, setMouthByUser,
+          faceByUser, setFaceByUser,
           showForSale, setShowForSale,
           itemForSale, setItemForSale,
           preparingFragNFTInfo, setPreparingFragNFTInfo,
