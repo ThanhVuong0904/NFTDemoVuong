@@ -1,0 +1,2 @@
+python main.py --src imgs/test13.png --dst imgs/test14.png --out results/output6_7.jpg --correct_color
+python main.py --src imgs/testvu.png --dst imgs/test14.png --out results/output6_7_2d.jpg --correct_color --warp_2d
