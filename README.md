@@ -23,7 +23,7 @@
 
 ![image](https://user-images.githubusercontent.com/68543789/150733579-7f89c575-87bf-4df2-b885-3b6a06ea9675.png)
 
-3. cd đến folder FaceSwap1 mở terminal chạy dòng lệnh
+3. cd đến folder `FaceSwap1` mở terminal chạy dòng lệnh
 
 `py main.py`
 
