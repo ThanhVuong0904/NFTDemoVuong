@@ -12,7 +12,7 @@ from requests.auth import HTTPBasicAuth
 import requests
 import base64
 from msilib import type_key
-
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -74,25 +74,26 @@ def request_page():
         os.makedirs(dir_path)
 
     cv2.imwrite('results/output6_7.jpg', output)
-    cv2.imwrite('../src/userupload/output6_7.jpg', output)
-    #dang lam
-    with open("test14.png", "rb") as image2string:
+
+    # upload image swap to ipfs
+    with open("results/output6_7.jpg", "rb") as image2string:
         converted_string = base64.b64encode(image2string.read())
 
-    dataIPFS = {
-        'path': 'images/output6_7.jpg',
-        'content': f'{converted_string}'
-    }
-
+    s = converted_string.decode('utf-8')
+    dataIPFS = [{
+        'path': 'images/output.jpg',
+        'content': f'{s}'
+    }]
     headers2 = {
-        'Authorization': 'k30Du9VUUJbgHG6db8QItgxGryCNwcw0KhZ1tfZz86e1LlabB44y1sMwEwqprYPr',
+        'X-API-KEY': 'k30Du9VUUJbgHG6db8QItgxGryCNwcw0KhZ1tfZz86e1LlabB44y1sMwEwqprYPr',
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
     
-    x = requests.post('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', data= dataIPFS, headers=headers2)
-    print("x",x.content)
-    print("y",x.text)
+    x = requests.post('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', json = dataIPFS, headers=headers2)
+    y = json.dumps(x.json()[0])
+    resp = json.loads(y)
+
     #
     ##For debug
     # if not args.no_debug_window:
@@ -102,7 +103,7 @@ def request_page():
         
     #     cv2.destroyAllWindows()
     
-    data_set = {'Success': 'True', 'Message': 'SwapFace'}
+    data_set = {'Success': 'True', 'Message': 'SwapFace in python', 'image_url' : f'{resp["path"]}'}
     json_dump = json.dumps(data_set)
     return json_dump
 
