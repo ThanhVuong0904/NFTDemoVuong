@@ -82,10 +82,11 @@ export default function MyNFT() {
           const priceToWei = await web3Api.web3.utils.toWei(itemForSale.price)
           //Add NFT vào market
           const receipt = 
-               await contract.methods.addItemToMarket( itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS,priceToWei)
+               await contract.methods.addItemToMarket(itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS, priceToWei)
                .send({from: account})
           console.log("addItemToMarket",receipt);
      }
+     //Open ModalForSale
      const handleForSale = async (item) => {
           setShowForSale(true)
           setItemForSale({
@@ -95,19 +96,21 @@ export default function MyNFT() {
           })
      }
      const handleCancelSale = async (nft) => {
-          console.log(nft);
+          console.log("handleCancelSale",nft);
           const contractMarket = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
           const receipt = await contractMarket.methods.cancel(nft.uid).send({from: account});
-          console.log(receipt);
+          console.log("handleCancelSale receipt",receipt);
      }
 
      const ensureMarketplaceIsApproved = async () => {
           const contractToken = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS);
           console.log("contractToken", contractToken);
-          const approvedAddress = await contractToken.methods.isApprovedForAll(account, MARKET_CONTRACT_ADDRESS).call({from: account});
+          const approvedAddress = await contractToken.methods.isApprovedForAll(
+               account, MARKET_CONTRACT_ADDRESS
+          ).call({from: account});
           console.log(approvedAddress);
           if (!approvedAddress){
-               const approveAll = await contractToken.methods.setApprovalForAll(MARKET_CONTRACT_ADDRESS, true).send({from: account})
+               await contractToken.methods.setApprovalForAll(MARKET_CONTRACT_ADDRESS, true).send({from: account})
           }
      }
      const showMoreOptionList = (index) => {
@@ -116,87 +119,17 @@ export default function MyNFT() {
                bool: !isShowMoreOptions.bool
           })
      }
-     const handleOpenModal = (id, image, width, height) => {
+
+     //Open ModalFragment
+     const handleOpenModal = (id, image) => {
           setShowPreparingFragNFTInfo(true)
           setPreparingFragNFTInfo({
                ...preparingFragNFTInfo,
                tokenId: id,
                image: image,
-               width,
-               height
           })
      }
-     const handleCutImage = async (item, index) => {
-          console.log(item, preparingFragNFTInfo);
-          var image = new Image
-          image.crossOrigin = "anonymous"
-          image.src = item.image
 
-          var imagePieces = [];
-          var imageResize = []
-          if(preparingFragNFTInfo.qtyFrag === '4') {
-               console.log("ok");
-          }
-          var numColsToCut 
-          var numRowsToCut
-          if(preparingFragNFTInfo.qtyFrag === '4') {
-               numColsToCut = 2
-               numRowsToCut = 2
-          }
-          if(preparingFragNFTInfo.qtyFrag === '9') {
-               numColsToCut = 3
-               numRowsToCut = 3
-          }
-          if(preparingFragNFTInfo.qtyFrag === '16') {
-               numColsToCut = 4
-               numRowsToCut = 4
-          }
-          var widthOfOnePiece = image.naturalWidth / numColsToCut
-          var heightOfOnePiece = image.naturalHeight / numRowsToCut
-          for(var x = 0; x < numColsToCut; ++x) {
-               for(var y = 0; y < numRowsToCut; ++y) {
-                    var canvas = document.createElement('canvas');
-                    canvas.width = widthOfOnePiece;
-                    canvas.height = heightOfOnePiece;
-                    var context = canvas.getContext('2d');
-                    context.drawImage(
-                         image, 
-                         y * heightOfOnePiece, 
-                         x * widthOfOnePiece, 
-                         heightOfOnePiece, 
-                         widthOfOnePiece, 
-                         0, 
-                         0, 
-                         canvas.height,
-                         canvas.width, 
-                    );
-                    compressImage(canvas.toDataURL(), image.naturalWidth, image.naturalHeight)
-                    .then((compressed) => {
-                         return imageResize.push(compressed)
-                    })
-                    .then(() => setPreparingFragNFTInfo({
-                         ...preparingFragNFTInfo,
-                         arrayImages: imageResize
-                    }))
-               }
-          }
-     }
-     function compressImage(src, newX, newY) {
-          return new Promise((res, rej) => {
-               const img = new Image();
-               img.src = src;
-               img.onload = () => {
-                    const elem = document.createElement("canvas");
-                    elem.width = newX;
-                    elem.height = newY;
-                    const ctx = elem.getContext("2d");
-                    ctx.drawImage(img, 0, 0, newX, newY);
-                    const data = ctx.canvas.toDataURL();
-                    res(data);
-               };
-               img.onerror = (error) => rej(error);
-          });
-     }
      const handleFrag = async () => {
           console.log(preparingFragNFTInfo);
           let array = []
@@ -252,7 +185,6 @@ export default function MyNFT() {
                {
                     preparingFragNFTInfo.image !== null && 
                          <ModalFragment 
-                              onCutImage={() => handleCutImage(preparingFragNFTInfo)}
                               onFrag={handleFrag}
                          />
                }

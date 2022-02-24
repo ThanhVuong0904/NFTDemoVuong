@@ -107,6 +107,13 @@ export default function NFTDetail() {
                          }
                          return object
                     }))
+                    const options = { 
+                         address: TOKEN_CONTRACT_ADDRESS, 
+                         token_id: resultQueryNFT.attributes.parentTokenId, 
+                         chain: "rinkeby" 
+                    };
+                    const tokenIdOwners = await Moralis.Web3API.token.getTokenIdOwners(options);
+                    console.log("tokenIdOwners", tokenIdOwners);
                     setNFTDetail({
                          ...NFTDetail,
                          image: resThisImage.image,
@@ -116,7 +123,8 @@ export default function NFTDetail() {
                          amountFragOfParent: resultQueryNFTParent.attributes.amountFrag,
                          isFrag: resultQueryNFT.attributes.isFrag,
                          parentTokenId: resultQueryNFT.attributes.parentTokenId,
-                         imageParent: resImageParent.image
+                         imageParent: resImageParent.image,
+                         ownerOfParent: tokenIdOwners.result[0].owner_of
                     })
                }
           }
@@ -145,7 +153,7 @@ export default function NFTDetail() {
                          {
                               NFTDetail.imageChild.map(item => 
                                    <div 
-                                        // key = {item.image}
+                                        key = {item.tokenId}
                                         className={
                                              `
                                                   ${item.nftOwner !== account ? 'opacity' : ''}
@@ -165,12 +173,13 @@ export default function NFTDetail() {
                          <img src={NFTDetail.imageParent} alt="" />
                          <p>Token ID: {NFTDetail.parentTokenId}</p>
                          <p>Số lượng phân mảnh: {NFTDetail.amountFragOfParent}</p>
+                         <p>Sở hữu bởi: {NFTDetail.ownerOfParent}</p>
                     </div>
                     <div className={`nft-detail-images d-grid grid-col-${Math.sqrt(NFTDetail.amountFragOfParent)} grid-gap-10`}>
                          {
                               NFTDetail.imageSameParent.map(item => 
                                    <div 
-                                        // key = {item.image}
+                                        key = {item.tokenId}
                                         className={`
                                              ${item.nftOwner !== account && 'opacity'} 
                                              ${item.tokenId === id && 'border-blue'}`

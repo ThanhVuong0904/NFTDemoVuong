@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal, Button, Form} from 'react-bootstrap'
 import { useContext } from 'react'
 import { NFTContext } from '../contexts/NFTContext'
@@ -6,6 +6,7 @@ import { useRef } from 'react'
 
 
 export default function ModalFragment({onCutImage, onFrag}) {
+     const [amountFrag, setAmountFrag] = useState(0)
      const {
           preparingFragNFTInfo, 
           setPreparingFragNFTInfo, 
@@ -15,17 +16,88 @@ export default function ModalFragment({onCutImage, onFrag}) {
      const handleClose = () => {
           setShowPreparingFragNFTInfo(false)
      }
+     //
+     const handleCutImage = async (qtyFrag) => {
+          console.log("modal",preparingFragNFTInfo);
+          console.log("qtyFrag", qtyFrag);
+          var image = new Image
+          image.crossOrigin = "anonymous"
+          image.src = preparingFragNFTInfo.image
+
+          var imageResize = []
+          if(qtyFrag === '4') {
+               console.log("ok");
+          }
+          var numColsToCut 
+          var numRowsToCut
+          if(qtyFrag === '4') {
+               numColsToCut = 2
+               numRowsToCut = 2
+          }
+          if(qtyFrag === '9') {
+               numColsToCut = 3
+               numRowsToCut = 3
+          }
+          if(qtyFrag === '16') {
+               numColsToCut = 4
+               numRowsToCut = 4
+          }
+          var widthOfOnePiece = image.naturalWidth / numColsToCut
+          var heightOfOnePiece = image.naturalHeight / numRowsToCut
+          for(var x = 0; x < numColsToCut; ++x) {
+               for(var y = 0; y < numRowsToCut; ++y) {
+                    var canvas = document.createElement('canvas');
+                    canvas.width = widthOfOnePiece;
+                    canvas.height = heightOfOnePiece;
+                    var context = canvas.getContext('2d');
+                    context.drawImage(
+                         image, 
+                         y * heightOfOnePiece, 
+                         x * widthOfOnePiece, 
+                         heightOfOnePiece, 
+                         widthOfOnePiece, 
+                         0, 
+                         0, 
+                         canvas.height,
+                         canvas.width, 
+                    );
+                    compressImage(canvas.toDataURL(), image.naturalWidth, image.naturalHeight)
+                    .then((compressed) => {
+                         return imageResize.push(compressed)
+                    })
+                    .then(() => setPreparingFragNFTInfo({
+                         ...preparingFragNFTInfo,
+                         arrayImages: imageResize
+                    }))
+               }
+          }
+     }
+     function compressImage(src, newX, newY) {
+          return new Promise((res, rej) => {
+               const img = new Image();
+               img.src = src;
+               img.onload = () => {
+                    const elem = document.createElement("canvas");
+                    elem.width = newX;
+                    elem.height = newY;
+                    const ctx = elem.getContext("2d");
+                    ctx.drawImage(img, 0, 0, newX, newY);
+                    const data = ctx.canvas.toDataURL();
+                    res(data);
+               };
+               img.onerror = (error) => rej(error);
+          });
+     }
      const handleSelect = (e) => {
           const select = document.getElementById("selectQty")
           const qtyFrag = select.options[select.selectedIndex].text
-          setPreparingFragNFTInfo(
-               {
-                    ...preparingFragNFTInfo, 
-                    qtyFrag
-               }
-          )
-          console.log(preparingFragNFTInfo);
+          setAmountFrag(qtyFrag)
+          handleCutImage(qtyFrag)
      }
+     
+     useEffect(() => {
+          console.log("preparingFragNFTInfo", preparingFragNFTInfo);
+     }, [preparingFragNFTInfo])
      const imgRef = useRef()
      return (
           <Modal show={showPreparingFragNFTInfo} onHide={handleClose} size='xl'>
@@ -47,7 +119,7 @@ export default function ModalFragment({onCutImage, onFrag}) {
                               <Form.Group>
                                    <Form.Select 
                                         aria-label="Default select example"
-                                        value={preparingFragNFTInfo.qtyFrag} 
+                                        value={amountFrag} 
                                         id="selectQty"
                                         onChange={handleSelect}
                                    >
@@ -58,7 +130,7 @@ export default function ModalFragment({onCutImage, onFrag}) {
                                    </Form.Select>
                               </Form.Group>
                          </div>
-                         <div className={`flex-1 d-grid grid-col-${Math.sqrt(preparingFragNFTInfo.qtyFrag)}`}>
+                         <div className={`flex-1 d-grid grid-col-${Math.sqrt(amountFrag)}`}>
                               {preparingFragNFTInfo.arrayImages !== null && (
                                    preparingFragNFTInfo.arrayImages.map((item, index) => {
                                         return <img key={index} src={item} alt={item} className='p-1 w100' />

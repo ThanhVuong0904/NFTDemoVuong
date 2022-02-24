@@ -309,6 +309,8 @@ app.get('/swapFace', async(req, res) => {
                     path: `images/output6_7.jpg`,
                     content: data.toString("base64")
                })
+               console.log("dataaaa", data);
+               // console.log("base64", data.toString("base64"));
                res()
           })
      }) )

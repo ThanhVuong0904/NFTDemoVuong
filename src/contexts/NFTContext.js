@@ -58,7 +58,6 @@ const NFTContextProvider = ({children}) => {
      const [preparingFragNFTInfo, setPreparingFragNFTInfo] = useState({
           tokenId: null,
           image: null,
-          qtyFrag: '',
           arrayImages: null,
      })
      
@@ -78,6 +77,14 @@ const NFTContextProvider = ({children}) => {
           file: null,
      })
      
+     const [srcImage, setSrcImage] = useState({
+          image: null,
+          file: null,
+     })
+     const [dstImage, setDstImage] = useState({
+          image: null,
+          file: null,
+     })
      const [phoneByUser, setPhoneByUser] = useState({
           boolean: false,
           image: null,
@@ -214,6 +221,8 @@ const NFTContextProvider = ({children}) => {
           itemForSale, setItemForSale,
           preparingFragNFTInfo, setPreparingFragNFTInfo,
           showPreparingFragNFTInfo, setShowPreparingFragNFTInfo,
+          dstImage, setDstImage, 
+          srcImage, setSrcImage
      }
      
      

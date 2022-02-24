@@ -6,7 +6,7 @@ import { TOKEN_CONTRACT_ADDRESS } from '../constants/address'
 import {Moralis} from 'moralis'
 import { useMoralisFile } from 'react-moralis'
 import axios from 'axios'
-import { useEffect } from 'react'
+
 
 export default function PreviewAvata() {
      const {
@@ -24,12 +24,13 @@ export default function PreviewAvata() {
           CLOTHES, clothes, 
           ACCESSORIES, accessories,
           BACKGROUND, background,
-          backgroundByUser, setBackgroundByUser,
-          phoneByUser, setPhoneByUser,
+          backgroundByUser,
+          phoneByUser,
           mouthByUser, setMouthByUser,
           result, web3Api, account
      } = useContext(NFTContext)
      const createNFT = async () => {
+
           if(backgroundByUser.boolean && !mouthByUser.boolean) {
                //Upload background to IPFS
                const backgroundFileImage = await new saveFile("background.png", backgroundByUser.file, {saveIPFS: true})
