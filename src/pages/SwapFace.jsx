@@ -19,7 +19,7 @@ export default function SwapFace() {
           const dstIPFS = await new saveFile("dstImage.png", dstImage.file, {saveIPFS: true})
           console.log("dst by user",dstIPFS._ipfs);
 
-          const sendImageToSwap = await axios.post('http://e362-171-252-188-153.ngrok.io', 
+          const sendImageToSwap = await axios.post('http://127.0.0.1:7777', 
                {url_src: srcIPFS._ipfs, url_dst: dstIPFS._ipfs}
           )
           // let t1 = 'https://ipfs.moralis.io:2053/ipfs/QmZvZKVU7xM2NW46mvCMPPSLxKe6VE7FbWQidkyquuicnC'

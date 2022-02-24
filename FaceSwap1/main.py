@@ -8,10 +8,8 @@ from flask_cors import CORS, cross_origin
 from face_detection import select_face
 from face_swap import face_swap
 import numpy as np
-from requests.auth import HTTPBasicAuth
 import requests
 import base64
-from msilib import type_key
 import json
 
 app = Flask(__name__)
@@ -51,8 +49,8 @@ def request_page():
     response_dst = urllib.request.urlopen(request_dst)
     decode_dst = cv2.imdecode(np.array(bytearray(response_dst.read()), dtype=np.uint8), -1)
 
-    print('url', url_src)
-    print('request', url_dst)
+    print('url_src', url_src)
+    print('url_dst', url_dst)
     # Read images
     src_img = decode_src
     dst_img = decode_dst
@@ -79,6 +77,8 @@ def request_page():
     with open("results/output6_7.jpg", "rb") as image2string:
         converted_string = base64.b64encode(image2string.read())
 
+    # converted_string trả về base64 nhưng có kí tự b'
+    # phải decode mới mất chữ b'
     s = converted_string.decode('utf-8')
     dataIPFS = [{
         'path': 'images/output.jpg',
