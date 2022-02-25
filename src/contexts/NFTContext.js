@@ -79,11 +79,11 @@ const NFTContextProvider = ({children}) => {
      
      const [srcImage, setSrcImage] = useState({
           image: null,
-          file: null,
+          base64: null,
      })
      const [dstImage, setDstImage] = useState({
           image: null,
-          file: null,
+          base64: null,
      })
      const [phoneByUser, setPhoneByUser] = useState({
           boolean: false,

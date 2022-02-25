@@ -39,18 +39,28 @@ def request_page():
     user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
     headers={'User-Agent':user_agent} 
 
-    url_src = request.json['url_src']
-    request_src = urllib.request.Request(url_src,None,headers) #The assembled request
-    response_src = urllib.request.urlopen(request_src)
-    decode_src = cv2.imdecode(np.array(bytearray(response_src.read()), dtype=np.uint8), -1)
+    # Link image
+    # url_src = request.json['url_src']
+    # request_src = urllib.request.Request(url_src,None,headers) #The assembled request
+    # response_src = urllib.request.urlopen(request_src)
+    # decode_src = cv2.imdecode(np.array(bytearray(response_src.read()), dtype=np.uint8), -1)
 
-    url_dst = request.json['url_dst']
-    request_dst = urllib.request.Request(url_dst,None,headers) #The assembled request
-    response_dst = urllib.request.urlopen(request_dst)
-    decode_dst = cv2.imdecode(np.array(bytearray(response_dst.read()), dtype=np.uint8), -1)
+    # url_dst = request.json['url_dst']
+    # request_dst = urllib.request.Request(url_dst,None,headers) #The assembled request
+    # response_dst = urllib.request.urlopen(request_dst)
+    # decode_dst = cv2.imdecode(np.array(bytearray(response_dst.read()), dtype=np.uint8), -1)
 
-    print('url_src', url_src)
-    print('url_dst', url_dst)
+    # base64 image
+    base64_src = request.json['base64_src']
+    decode_base64_img_src = base64.b64decode(base64_src); 
+    npimg_src = np.fromstring(decode_base64_img_src, dtype=np.uint8); 
+    decode_src = cv2.imdecode(npimg_src, 1)
+
+    base64_dst = request.json['base64_dst']
+    decode_base64_img_dst = base64.b64decode(base64_dst); 
+    npimg_dst = np.fromstring(decode_base64_img_dst, dtype=np.uint8); 
+    decode_dst = cv2.imdecode(npimg_dst, 1)
+
     # Read images
     src_img = decode_src
     dst_img = decode_dst

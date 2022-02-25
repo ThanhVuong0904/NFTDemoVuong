@@ -11,22 +11,33 @@ export default function SwapFace() {
           saveFile,
      } = useMoralisFile();
      const [swapFaceIPFS, setSwapFaceIPFS] = useState('')
-     
+
+     function getBase64(file) {
+          return new Promise((resolve, reject) => {
+               const reader = new FileReader();
+               reader.readAsDataURL(file);
+               reader.onload = () => {
+                    let encoded = reader.result.toString().replace(/^data:(.*,)?/, '');
+                    if ((encoded.length % 4) > 0) {
+                         encoded += '='.repeat(4 - (encoded.length % 4));
+                    }
+                    resolve(encoded);
+               };
+               reader.onerror = error => reject(error);
+          });
+     }
      const swapFace = async () => {
-          const srcIPFS = await new saveFile("srcImage.png", srcImage.file, {saveIPFS: true})
-          console.log("src by user",srcIPFS._ipfs);
-
-          const dstIPFS = await new saveFile("dstImage.png", dstImage.file, {saveIPFS: true})
-          console.log("dst by user",dstIPFS._ipfs);
-
+          console.log(srcImage);
+          console.log(dstImage);
           const sendImageToSwap = await axios.post('http://127.0.0.1:7777', 
-               {url_src: srcIPFS._ipfs, url_dst: dstIPFS._ipfs}
+               {base64_src: srcImage.base64, base64_dst: dstImage.base64}
           )
-          // let t1 = 'https://ipfs.moralis.io:2053/ipfs/QmZvZKVU7xM2NW46mvCMPPSLxKe6VE7FbWQidkyquuicnC'
-          // let t2 = 'https://ipfs.moralis.io:2053/ipfs/QmSzYpRbAYr52QCek7cfqEvTEa8Pnas63xVHqtBcTdX6Vw'
-          // const sendImageToSwap = await axios.post('http://127.0.0.1:7777', 
-          //      {url_src: t1, url_dst: t2}
-          // )
+          
+          // // let t1 = 'https://ipfs.moralis.io:2053/ipfs/QmZvZKVU7xM2NW46mvCMPPSLxKe6VE7FbWQidkyquuicnC'
+          // // let t2 = 'https://ipfs.moralis.io:2053/ipfs/QmSzYpRbAYr52QCek7cfqEvTEa8Pnas63xVHqtBcTdX6Vw'
+          // // const sendImageToSwap = await axios.post('http://127.0.0.1:7777', 
+          // //      {url_src: t1, url_dst: t2}
+          // // )
 		console.log(sendImageToSwap);
           setSwapFaceIPFS(sendImageToSwap.data.image_url)
 	}
@@ -35,14 +46,15 @@ export default function SwapFace() {
           const file = e.target.files[0]
           setSrcImage({
                image: URL.createObjectURL(file),
-               file: file
+               base64: await getBase64(file)
           })
+          
      }
      const handleDstImageUpload = async (e) => {
           const file = e.target.files[0]
           setDstImage({
                image: URL.createObjectURL(file),
-               file: file
+               base64: await getBase64(file)
           })
      }
      return (
