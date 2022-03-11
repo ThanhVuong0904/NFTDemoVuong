@@ -47,10 +47,15 @@
           }
      }
 }
-.eyes, .headdress, .phone, .mouth, .clothes, .accessories, .background {
+.eyes, .headdress, .phone, .mouth, .clothes, .accessories, .background, .video {
      &.active {
           display: grid;
      }
+}
+.wrap-video {
+     width: 300px;
+     height: 300px;
+     border: 1px solid red;
 }
 .create-nft {
      display: grid;

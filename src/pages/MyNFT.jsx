@@ -1,4 +1,6 @@
 import React, { useEffect, useContext, useState, useRef} from 'react'
+import ReactPlayer from 'react-player';
+import { ToastContainer, toast } from 'react-toastify';
 import { Link } from 'react-router-dom'
 import {Moralis} from 'moralis'
 import { useMoralisFile } from 'react-moralis'
@@ -7,6 +9,7 @@ import {MarketplaceABI} from '../abiMarket'
 import { NFTAPI } from '../abiContract'
 import { TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS } from '../constants/address'
 import ETHIcon from '../assets/images/eth_logo.svg'
+import PlayIcon from '../assets/images/bx-play.svg'
 import ModalForSale from '../components/ModalForSale'
 import DotIcon from '../assets/images/bx-dots-horizontal-rounded.svg'
 import ModalFragment from '../components/ModalFragment'
@@ -19,6 +22,7 @@ export default function MyNFT() {
           preparingFragNFTInfo, setPreparingFragNFTInfo,
           setShowPreparingFragNFTInfo,
 	} = useContext(NFTContext);
+
      const {
           saveFile,
      } = useMoralisFile();
@@ -28,12 +32,14 @@ export default function MyNFT() {
           index: null,
           bool: false
      })
+
+     const [playVideo, setPlayVideo] = useState(null)
      const getUserNFTs = async () => {
           const owner = await Moralis.Cloud.run('getUserNFTs', {
                account_address: account,
                token_address: TOKEN_CONTRACT_ADDRESS
           })
-          console.log(owner);
+          console.log({owner});
           fetchData(owner)
      }
      
@@ -41,6 +47,7 @@ export default function MyNFT() {
      const fetchData = async (userNFT) => {
           userNFT.map(async (item, index) => {
                console.log(item);
+               setMyNFT([])
                //Tìm item đang bán
                //Nếu đang bán thì gán uid = id ở trong market
                //Nếu đang bán thì tìm kiếm giá đang bán gán vào price
@@ -65,6 +72,7 @@ export default function MyNFT() {
                               isFrag: item.isFrag,
                               amountFrag: item.amountFrag,
                               attributes: data.attributes,
+                              animation_url: data.animation_url && data.animation_url 
                          }
                     ]
                ))
@@ -132,6 +140,7 @@ export default function MyNFT() {
 
      const handleFrag = async () => {
           console.log(preparingFragNFTInfo);
+          const id = toast.loading("Đang tạo phân mảnh NFT.....")
           let array = []
           array = await Promise.all(preparingFragNFTInfo.arrayImages.map(async (item, index) => {
                const cutImagesIpfs = await new saveFile("mouth.png", {base64: item}, {saveIPFS: true})
@@ -170,6 +179,9 @@ export default function MyNFT() {
           const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
           const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: account})
           console.log(`receipt`,receipt);
+          if(receipt.status) {
+               toast.update(id, { render: "Phân mảnh NFT thành công", type: "success", isLoading: false, autoClose: 5000});
+          }
      }
      useEffect(() => {
           account && getUserNFTs()
@@ -180,6 +192,19 @@ export default function MyNFT() {
      
      return (
           <div className='my-nft'>
+               <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    />
+                    {/* Same as */}
+               <ToastContainer />
                <div className="my-nft-list">
                {itemForSale !== null && <ModalForSale onBuyNFT={handleSell}/>}
                {
@@ -190,20 +215,37 @@ export default function MyNFT() {
                }
                {
                     myNFT.map((item, index) => {
-                         // const metadata = JSON.parse(item.metadata)
                          return(
                               <div 
                                    className="my-nft-item" 
                                    key={index} 
                               >
-                                   <img 
-                                        src={item.image} 
-                                        alt={item.image} 
-                                        crossOrigin="anonymous" 
-                                        className='card-img-top'
-                                        ref={imgRef}
-                                   /> 
+                                   {
+                                        item.tokenId === playVideo ? 
+                                        <div style={{height: 283}}>
+                                             <ReactPlayer 
+                                                  url={item.animation_url} 
+                                                  width="100%" 
+                                                  height="100%" 
+                                                  controls={true}
+                                             />
+                                        </div>
+                                        :
+                                        <img 
+                                             src={item.image} 
+                                             alt={item.image} 
+                                             crossOrigin="anonymous" 
+                                             className='card-img-top'
+                                             ref={imgRef}
+                                        />
+                                   } 
                                    <div className="card-body">
+                                        {
+                                             item.animation_url && 
+                                             <div className="play-icon" onClick={() => setPlayVideo(item.tokenId)}>
+                                                  <img src={PlayIcon} alt="" />
+                                             </div>
+                                        }
                                         <p className='my-nft-name'>{item.name}</p>
                                         <div className="d-flex align-items-center justify-content-between">
                                              <p className='my-nft-tokenId'>{item.tokenId}</p>

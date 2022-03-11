@@ -5,7 +5,7 @@ import { NFTContext } from '../contexts/NFTContext'
 import { useRef } from 'react'
 
 
-export default function ModalFragment({onCutImage, onFrag}) {
+export default function ModalFragment({onFrag}) {
      const [amountFrag, setAmountFrag] = useState(0)
      const {
           preparingFragNFTInfo, 
@@ -114,7 +114,7 @@ export default function ModalFragment({onCutImage, onFrag}) {
                                    crossOrigin="anonymous" 
                                    ref={imgRef}
                               />
-                              <p>{preparingFragNFTInfo.tokenId}</p>
+                              <p className='text-secondary fw-600 mt-2 mb-2'>Token ID: {preparingFragNFTInfo.tokenId}</p>
                               {/* <p>Kích thước{preparingFragNFTInfo.width}x{preparingFragNFTInfo.height}</p> */}
                               <Form.Group>
                                    <Form.Select 
@@ -123,7 +123,7 @@ export default function ModalFragment({onCutImage, onFrag}) {
                                         id="selectQty"
                                         onChange={handleSelect}
                                    >
-                                        <option>Open this select menu</option>
+                                        <option>Vui lòng chọn số lượng phân mảnh</option>
                                         <option value="4">4</option>
                                         <option value="9">9</option>
                                         <option value="16">16</option>
@@ -145,13 +145,13 @@ export default function ModalFragment({onCutImage, onFrag}) {
                     <Button variant='secondary' onClick={handleClose}>
                          Cancel
                     </Button>
-                    <Button variant='primary' onClick={onCutImage}>
+                    {/* <Button variant='primary' onClick={onCutImage}>
                          Xem trước
-                    </Button>
+                    </Button> */}
                     <Button 
                          variant='primary' 
                          onClick={onFrag} 
-                         // disabled={!preparingFragNFTInfo.arrayImages.length > 0}
+                         disabled={!amountFrag > 0}
                     >
                          Đồng ý Phân mảnh
                     </Button>

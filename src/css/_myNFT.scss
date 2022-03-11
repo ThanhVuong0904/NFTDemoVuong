@@ -10,6 +10,9 @@
           border-radius: 10px;
           overflow: hidden;
           background-color: rgb(255, 255, 255);
+          & .card-img-top {
+               height: 283px;
+          }    
      }
      &-action {
           margin-top: 20px;
@@ -54,6 +57,19 @@
                     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
                }
           }
+     }
+     .card-body {
+          position: relative;
+     }
+     .play-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid rgb(229, 232, 235);
+          border-radius: 100%;
+          cursor: pointer;
+          position: absolute;
+          right: 20px;
      }
 }
 .flex-1 {

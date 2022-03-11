@@ -3,9 +3,12 @@ const express = require('express')
 const cors = require('cors')
 const fs = require('fs')
 const axios  = require('axios')
-const Moralis = require('moralis/node')
+const cloudinary = require('cloudinary')
 const FormData = require('form-data');
-const path = require('path');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path
+const ffmpeg = require('fluent-ffmpeg')
+ffmpeg.setFfmpegPath(ffmpegPath)
+
 const {removeBackgroundFromImageUrl,removeBackgroundFromImageFile} = require("remove.bg")
 const app = express()
 app.use(express.json())
@@ -122,6 +125,33 @@ const PORT = process.env.PORT || 5000
 app.use(cors())
 
 // https://shlprjquhmo7.usemoralis.com
+cloudinary.config({
+     cloud_name: process.env.CLOUD_NAME,
+     api_key: process.env.CLOUD_API_KEY,
+     api_secret: process.env.CLOUD_API_SECRET,
+})
+app.post('/uploadvideo', async (req, res) => {
+     console.log(req.body.qty);
+     console.log(req.body.duration);
+     console.log(req.body.timeEachVideo);
+     const {qty, duration, timeEachVideo} = req.body
+
+     ffmpeg('test12.mp4')
+          .outputOptions([
+               '-map 0',
+               '-c copy',
+               '-f segment',
+               '-reset_timestamps 1',
+               '-segment_time 00:00:02',
+          ])
+          .save(`out%03d.mp4`)
+          .on('end', function(err) {
+          if(!err) { console.log('conversion Done') }
+          })
+          .on('error', function(err){
+          console.log('error: ', err)
+          }).run()
+})
 
 app.post('/composite', async (req, response) => {
      const {result, backgroundByUser, mouthByUser} = req.body

@@ -27,11 +27,15 @@ function App() {
 
 	}, [isAuthenticated]);
 	useEffect(() => {
-		Moralis.onAccountChanged(async (account) => {
-			console.log("account change" , account)
-			await Moralis.User.logOut()
-		});
+		
 	}, [account])
+	Moralis.onAccountChanged(async (account) => {
+		console.log("account change" ,isAuthenticated)
+		await Moralis.User.logOut()
+		authenticate({ signingMessage: "Moralis Authentication" })
+		// if(!isAuthenticated) {
+		// }
+	});
 	if(!isAuthenticated) {
 		return (
 			<div>

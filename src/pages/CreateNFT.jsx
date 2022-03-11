@@ -8,6 +8,7 @@ import Clothes from '../components/Clothes'
 import Accessories from '../components/Accessories'
 import Background from '../components/Background'
 import PreviewAvata from '../components/PreviewAvata'
+import NFTVideo from '../components/NFTVideo'
 export default function CreateNFT() {
      return (
           <div className='create-nft'>
@@ -20,6 +21,7 @@ export default function CreateNFT() {
                     <Clothes/>
                     <Accessories/>
                     <Background />
+                    <NFTVideo />
                </div>
                <PreviewAvata />
           </div>

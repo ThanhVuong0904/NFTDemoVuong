@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './css/style.css'
+import 'react-toastify/dist/ReactToastify.css';
 import NTFContextProvider from './contexts/NFTContext'
 
 ReactDOM.render(

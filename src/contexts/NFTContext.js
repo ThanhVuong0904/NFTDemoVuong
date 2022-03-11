@@ -85,6 +85,16 @@ const NFTContextProvider = ({children}) => {
           image: null,
           base64: null,
      })
+     const [blobLinkVideo, setBlobLinkVideo] = useState('')
+     const [cloudInaryVideo, setCloudInaraVideo] = useState({
+          file: null,
+          link: null
+     })
+     const [durationVideo, setDurationVideo] = useState(0)
+     const [previewImageForVideo, setPreviewImageForVideo] = useState({
+          file: null,
+          image: null
+     })
      const [phoneByUser, setPhoneByUser] = useState({
           boolean: false,
           image: null,
@@ -94,6 +104,7 @@ const NFTContextProvider = ({children}) => {
           boolean: false,
           image: null,
           file: null,
+          isRemoveBg: false
      })
      const { 
 		authenticate, isAuthenticated, user, isInitialized,
@@ -212,6 +223,10 @@ const NFTContextProvider = ({children}) => {
           BACKGROUND, background, setBackground,
           backgroundByUser, setBackgroundByUser,
           result, setResult,
+          blobLinkVideo, setBlobLinkVideo,
+          cloudInaryVideo, setCloudInaraVideo,
+          durationVideo, setDurationVideo,
+          previewImageForVideo, setPreviewImageForVideo,
           authenticate, isAuthenticated, user,isInitialized, isAuthenticating, isUnauthenticated,
           web3Api , account , logout, isWeb3Enabled, enableWeb3,
           phoneByUser, setPhoneByUser,

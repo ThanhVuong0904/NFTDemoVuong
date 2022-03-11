@@ -8,7 +8,7 @@ const OPTIONS = [
      {id: 5, display: 'Clothes (7)'},
      {id: 6, display: 'Accessories (6)'},
      {id: 7, display: 'Background (7)'},
-
+     {id: 8, display: 'Video'},
 ]
 export default function Options() {
      const {options, setOptions} = useContext(NFTContext)
