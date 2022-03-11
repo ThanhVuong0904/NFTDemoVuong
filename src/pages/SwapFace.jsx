@@ -58,15 +58,13 @@ export default function SwapFace() {
           })
      }
      
-     const test = async () => {
-          const res = await axios.post('http://localhost:5000/uploadvideo', 
-          {qty: 4, duration: 10, timeEachVideo: 10/4}
-          )
-     }
+     // const test = async () => {
+     //      const res = await axios.post('http://localhost:5000/uploadvideo', 
+     //      {qty: 4, duration: 10, timeEachVideo: 10/4}
+     //      )
+     // }
      return (
           <div>
-               <label htmlFor="">Chọn video</label>
-               
                <label htmlFor="">Chọn hình src</label>
                <input type="file" onChange={handleSrcImageUpload}/>
                <label htmlFor="">Chọn hình dst</label>
@@ -77,7 +75,7 @@ export default function SwapFace() {
                     <img src={swapFaceIPFS} alt="" />
                </div>
                <button onClick={swapFace}>SwapFace</button>
-               <button onClick={test} className='btn btn-primary'>Phân mảnh video</button>
+               {/* <button onClick={test} className='btn btn-primary'>Phân mảnh video</button> */}
                
           </div>
      )
