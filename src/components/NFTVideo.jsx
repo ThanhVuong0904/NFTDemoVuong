@@ -24,6 +24,7 @@ export default function NFTVideo() {
 
           vid.ondurationchange = function() {
                console.log(this.duration);
+               console.log(vid.duration);
                setDurationVideo(this.duration)
           };
      }

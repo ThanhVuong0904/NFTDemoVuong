@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useContext } from 'react';
 import { NFTContext } from '../contexts/NFTContext';
 import { TOKEN_CONTRACT_ADDRESS } from '../constants/address';
+import ReactPlayer from 'react-player';
 
 export default function NFTDetail() {
      let {id} = useParams()
@@ -51,6 +52,7 @@ export default function NFTDetail() {
                          const nftOwner = await Moralis.Web3API.token.getTokenIdMetadata(options);
                          const object = {
                               image: data.image,
+                              animation_url: data.animation_url && data.animation_url,
                               tokenId: item.attributes.tokenId,
                               nftOwner: nftOwner.owner_of
                          }
@@ -60,6 +62,7 @@ export default function NFTDetail() {
                     setNFTDetail({
                          ...NFTDetail,
                          image: resThisImage.image,
+                         animation_url: resThisImage.animation_url && resThisImage.animation_url,
                          imageChild: imageChild,
                          amountFrag: resultQueryNFT.attributes.amountFrag,
                          // amountFragOfParent: resultQueryNFTParent.attributes.amountFrag,
@@ -84,6 +87,7 @@ export default function NFTDetail() {
                          const nftOwner = await Moralis.Web3API.token.getTokenIdMetadata(options);
                          const object = {
                               image: data.image,
+                              animation_url: data.animation_url && data.animation_url,
                               tokenId: item.attributes.tokenId,
                               nftOwner: nftOwner.owner_of
                          }
@@ -102,6 +106,7 @@ export default function NFTDetail() {
                          const nftOwner = await Moralis.Web3API.token.getTokenIdMetadata(options);
                          const object = {
                               image: data.image,
+                              animation_url: data.animation_url && data.animation_url,
                               tokenId: item.attributes.tokenId,
                               nftOwner: nftOwner.owner_of
                          }
@@ -117,6 +122,7 @@ export default function NFTDetail() {
                     setNFTDetail({
                          ...NFTDetail,
                          image: resThisImage.image,
+                         animation_url: resThisImage.animation_url && resThisImage.animation_url,
                          imageSameParent: imageSameParent,
                          imageChild: imageChild,
                          amountFrag: resultQueryNFT.attributes.amountFrag,
@@ -124,6 +130,7 @@ export default function NFTDetail() {
                          isFrag: resultQueryNFT.attributes.isFrag,
                          parentTokenId: resultQueryNFT.attributes.parentTokenId,
                          imageParent: resImageParent.image,
+                         animation_url_parent: resImageParent.animation_url && resImageParent.animation_url,
                          ownerOfParent: tokenIdOwners.result[0].owner_of
                     })
                }
@@ -137,7 +144,18 @@ export default function NFTDetail() {
           <div>
                <div className='nft-detail d-flex'>
                     <div className="nft-detail-image">
-                         <img src={NFTDetail.image} alt="" />
+                         {
+                              NFTDetail.animation_url && 
+                              <ReactPlayer 
+                              width='100%'
+                              height='100%'
+                              controls={true} 
+                              url={NFTDetail.animation_url}
+                              />
+                         }
+                         {
+                              !NFTDetail.animation_url && <img src={NFTDetail.image} alt="" />
+                         }
                          <p className='text-secondary fw-600'>Token ID: {id}</p>
                          {
                               NFTDetail.parentTokenId === '0' ? 
@@ -161,7 +179,18 @@ export default function NFTDetail() {
                                              `
                                         }
                                    >
-                                        <img className='w100' src={item.image} alt="" />
+                                        {item.animation_url && 
+                                        <ReactPlayer 
+                                             width='100%'
+                                             height='100%'
+                                             controls={true} 
+                                             url={item.animation_url}
+                                        />
+                                        }
+                                        {!item.animation_url && 
+                                             <img className='w100' src={item.image} alt="" />
+                                        }
+                                        
                                    </div>
                               )
                          }
@@ -170,7 +199,16 @@ export default function NFTDetail() {
                <h3 className='mt-4'>Đây là NFT cha</h3>
                <div className='nft-detail-parent d-flex'>
                     <div className="nft-detail-image">
-                         <img src={NFTDetail.imageParent} alt="" />
+                         {NFTDetail.animation_url_parent && 
+                         <ReactPlayer 
+                              width='100%'
+                              height='100%'
+                              controls={true} 
+                              url={NFTDetail.animation_url_parent}
+                         />
+                         }
+                         {!NFTDetail.animation_url_parent && <img src={NFTDetail.imageParent} alt="" />}
+
                          <p>Token ID: {NFTDetail.parentTokenId}</p>
                          <p>Số lượng phân mảnh: {NFTDetail.amountFragOfParent}</p>
                          <p>Sở hữu bởi: {NFTDetail.ownerOfParent}</p>
@@ -185,7 +223,15 @@ export default function NFTDetail() {
                                              ${item.tokenId === id && 'border-blue'}`
                                         }
                                    >
-                                        <img className='w100' src={item.image} alt="" />
+                                        {item.animation_url && 
+                                        <ReactPlayer 
+                                             width='100%'
+                                             height='100%'
+                                             controls={true} 
+                                             url={item.animation_url}
+                                        />
+                                        }
+                                        {!item.animation_url &&<img className='w100' src={item.image} alt="" /> }
                                    </div>
                               )
                          }

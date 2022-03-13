@@ -13,6 +13,7 @@ import PlayIcon from '../assets/images/bx-play.svg'
 import ModalForSale from '../components/ModalForSale'
 import DotIcon from '../assets/images/bx-dots-horizontal-rounded.svg'
 import ModalFragment from '../components/ModalFragment'
+import ModalFragmentVideo from '../components/ModalFragmentVideo';
 
 export default function MyNFT() {
      const { 
@@ -21,6 +22,8 @@ export default function MyNFT() {
           itemForSale, setItemForSale,
           preparingFragNFTInfo, setPreparingFragNFTInfo,
           setShowPreparingFragNFTInfo,
+          preparingFragNFTVideoInfo, setPreparingFragNFTVideoInfo,
+          showModalFragmentVideo, setShowModalFragmentVideo
 	} = useContext(NFTContext);
 
      const {
@@ -43,7 +46,6 @@ export default function MyNFT() {
           fetchData(owner)
      }
      
-
      const fetchData = async (userNFT) => {
           userNFT.map(async (item, index) => {
                console.log(item);
@@ -56,6 +58,11 @@ export default function MyNFT() {
                const result = await itemForSale.first()
                console.log(result);
                
+               const createItem = new Moralis.Query('CreateNFTs')
+               createItem.equalTo('tokenId', item.tokenId)
+               const createItemResult = await createItem.first()
+               console.log({createItemResult});
+
                await fetch(item.tokenUri)
                .then(res => res.json())
                .then(data => setMyNFT(prev => 
@@ -69,8 +76,8 @@ export default function MyNFT() {
                               image: data.image,
                               name: item.name,
                               price: result && result.attributes.tokenId === item.tokenId && result.attributes.askingPrice,
-                              isFrag: item.isFrag,
-                              amountFrag: item.amountFrag,
+                              isFrag: createItemResult.attributes.isFrag,
+                              amountFrag: createItemResult.attributes.amountFrag,
                               attributes: data.attributes,
                               animation_url: data.animation_url && data.animation_url 
                          }
@@ -129,13 +136,24 @@ export default function MyNFT() {
      }
 
      //Open ModalFragment
-     const handleOpenModal = (id, image) => {
-          setShowPreparingFragNFTInfo(true)
-          setPreparingFragNFTInfo({
-               ...preparingFragNFTInfo,
-               tokenId: id,
-               image: image,
-          })
+     const handleOpenModal = (id, image, animationUrl) => {
+          console.log({animationUrl});
+          if(animationUrl === undefined) {
+               setShowPreparingFragNFTInfo(true)
+               setPreparingFragNFTInfo({
+                    ...preparingFragNFTInfo,
+                    tokenId: id,
+                    image: image,
+               })
+          }
+          else {
+               setShowModalFragmentVideo(true)
+               setPreparingFragNFTVideoInfo({
+                    ...preparingFragNFTVideoInfo, 
+                    tokenId: id,
+                    linkVideo: animationUrl
+               })
+          }
      }
 
      const handleFrag = async () => {
@@ -212,6 +230,10 @@ export default function MyNFT() {
                          <ModalFragment 
                               onFrag={handleFrag}
                          />
+               }
+               {
+                    preparingFragNFTVideoInfo.linkVideo !== null &&
+                         <ModalFragmentVideo />
                }
                {
                     myNFT.map((item, index) => {
@@ -298,7 +320,8 @@ export default function MyNFT() {
                                                        className='more-options-item'
                                                        onClick={() => handleOpenModal(
                                                             item.tokenId, 
-                                                            item.image, 
+                                                            item.image,
+                                                            item.animation_url 
                                                        )}
                                                   >
                                                        Phân mảnh

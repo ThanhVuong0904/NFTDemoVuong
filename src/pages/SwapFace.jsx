@@ -57,12 +57,15 @@ export default function SwapFace() {
                base64: await getBase64(file)
           })
      }
-     
-     // const test = async () => {
-     //      const res = await axios.post('http://localhost:5000/uploadvideo', 
-     //      {qty: 4, duration: 10, timeEachVideo: 10/4}
-     //      )
-     // }
+     const [testBase, setTestBase] = useState([])
+     const test = async () => {
+
+          const res = await axios.post('http://localhost:5000/fragmentVideo', 
+          {qty: 4, duration: 10, timeEachVideo: 10/4}
+          )
+          console.log({res});
+          setTestBase(res.data.base64)
+     }
      return (
           <div>
                <label htmlFor="">Chọn hình src</label>
@@ -75,8 +78,15 @@ export default function SwapFace() {
                     <img src={swapFaceIPFS} alt="" />
                </div>
                <button onClick={swapFace}>SwapFace</button>
-               {/* <button onClick={test} className='btn btn-primary'>Phân mảnh video</button> */}
-               
+               <button onClick={test} className='btn btn-primary'>Phân mảnh video</button>
+               {
+                    testBase.map(item => {
+                         console.log(item);
+                         return (
+                              <ReactPlayer controls={true} url={`data:video/mp4;base64,${item}`} width='100%' height='100%'/>
+                         )
+                    })
+               }
           </div>
      )
 }

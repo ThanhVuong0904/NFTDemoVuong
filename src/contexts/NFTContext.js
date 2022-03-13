@@ -61,6 +61,14 @@ const NFTContextProvider = ({children}) => {
           arrayImages: null,
      })
      
+     const [showModalFragmentVideo, setShowModalFragmentVideo] = useState(false)
+     const [preparingFragNFTVideoInfo, setPreparingFragNFTVideoInfo] = useState({
+          tokenId: null,
+          linkVideo: null,
+          amountFrag: '',
+          duration: ''
+     })
+
      const [itemForSale, setItemForSale] = useState({
           tokenId: null,
           image: null,
@@ -227,6 +235,8 @@ const NFTContextProvider = ({children}) => {
           cloudInaryVideo, setCloudInaraVideo,
           durationVideo, setDurationVideo,
           previewImageForVideo, setPreviewImageForVideo,
+          showModalFragmentVideo, setShowModalFragmentVideo,
+          preparingFragNFTVideoInfo, setPreparingFragNFTVideoInfo,
           authenticate, isAuthenticated, user,isInitialized, isAuthenticating, isUnauthenticated,
           web3Api , account , logout, isWeb3Enabled, enableWeb3,
           phoneByUser, setPhoneByUser,
