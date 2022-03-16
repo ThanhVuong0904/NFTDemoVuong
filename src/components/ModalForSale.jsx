@@ -16,6 +16,7 @@ export default function ModalForSale({onBuyNFT}) {
                          <div>
                               <img src={itemForSale.image} alt="" />
                               <p>{itemForSale.tokenId}</p>
+                              <p>{itemForSale.chain}</p>
                          </div>
                          <Form.Group>
                               <Form.Label>ETH</Form.Label>

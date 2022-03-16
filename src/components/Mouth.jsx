@@ -1,10 +1,16 @@
 import React, { useContext } from 'react'
 import { NFTContext } from '../contexts/NFTContext'
 import CheckIcon from '../assets/images/bx-check.svg'
+import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
 
 
 export default function Mouth() {
-     const {options, MOUTH, mouth, setMouth, result, setResult, mouthByUser, setMouthByUser} = useContext(NFTContext)
+     const {
+          options, 
+          MOUTH, mouth, setMouth, 
+          result, setResult, 
+          mouthByUser, setMouthByUser
+     } = useContext(AvatartNFTContext)
      const handleMouth = (id) => {
           setMouth(id)
           setResult({...result, mouth: id})

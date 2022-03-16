@@ -1,9 +1,10 @@
 import React, {useContext} from 'react'
 import CheckIcon from '../assets/images/bx-check.svg'
+import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
 import { NFTContext } from '../contexts/NFTContext'
 
 export default function Clothes() {
-     const {options, CLOTHES, clothes, setClothes, result, setResult} = useContext(NFTContext)
+     const {options, CLOTHES, clothes, setClothes, result, setResult} = useContext(AvatartNFTContext)
      const handleClothes = (id) => {
           setClothes(id)
           setResult({...result, clothes: id})

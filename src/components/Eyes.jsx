@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
 
 import CheckIcon from '../assets/images/bx-check.svg'
+import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
 import { NFTContext } from '../contexts/NFTContext'
 
 export default function Eyes() {
-     const {options, EYES, eye, setEye,result, setResult} = useContext(NFTContext)
+     const {options, EYES, eye, setEye,result, setResult} = useContext(AvatartNFTContext)
      const handleEye = (id) => {
           setEye(id)
           setResult({...result, eye: id})

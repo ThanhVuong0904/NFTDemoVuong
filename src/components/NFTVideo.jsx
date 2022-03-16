@@ -1,15 +1,18 @@
 import React, {useContext} from 'react'
 import { NFTContext } from '../contexts/NFTContext'
 import axios from 'axios';
+import { AvatartNFTContext } from '../contexts/AvatarNFTContext';
 
 export default function NFTVideo() {
      const {
-          options,
           cloudInaryVideo, setCloudInaraVideo,
           blobLinkVideo, setBlobLinkVideo,
           durationVideo, setDurationVideo,
           previewImageForVideo, setPreviewImageForVideo
      } = useContext(NFTContext)
+     const {
+          options,
+     } = useContext(AvatartNFTContext)
      console.log(options);
      const handleChangeVideo = async e => {
           const file = e.target.files[0]

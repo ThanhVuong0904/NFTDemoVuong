@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import {Moralis} from 'moralis'
 import { NFTAPI } from '../abiContract'
-import { TOKEN_CONTRACT_ADDRESS } from '../constants/address'
+import { TOKEN_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS_BSC } from '../constants/address'
 import { useMoralisFile } from 'react-moralis'
 import { Modal, Button, Form} from 'react-bootstrap'
 import { NFTContext } from '../contexts/NFTContext'
@@ -14,12 +14,12 @@ export default function ModalFragmentVideo() {
           setPreparingFragNFTVideoInfo, 
           showModalFragmentVideo, 
           setShowModalFragmentVideo,
-          web3Api,account
+          web3Api,account, checkNetWork
      } = useContext(NFTContext)
      const {
           saveFile,
      } = useMoralisFile();
-     const [testMetadata,setTestMetadata] = useState([])
+     const [base64VideoAndImage,setBase64VideoAndImage] = useState([])
      const [videoBase64Frag, setVideoBase64Frag] = useState([])
      const refDuration = useRef()
      const handleFragVideo = async () => {
@@ -34,8 +34,10 @@ export default function ModalFragmentVideo() {
           console.log({res});
           setVideoBase64Frag(res.data.base64)
      }
-     const ok = async () => {
-          let arrayMetadata = await Promise.all(testMetadata.map(async (item, index) => {
+     const handleCreateFragVideo = async () => {
+          console.log({preparingFragNFTVideoInfo});
+          await checkNetWork(preparingFragNFTVideoInfo.chain, preparingFragNFTVideoInfo.hex)
+          let arrayMetadata = await Promise.all(base64VideoAndImage.map(async (item, index) => {
                const previewFragmentVideo = await new saveFile("previewFragmentVideo.png", item.fileImage, {saveIPFS: true})
                console.log("previewFragmentVideo",previewFragmentVideo._ipfs);
 
@@ -65,14 +67,23 @@ export default function ModalFragmentVideo() {
                return nftFileMetadataFilePath
           }))
           console.log({arrayMetadata});
-          const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-          const receipt = await contract.methods.createCollection(arrayMetadata, preparingFragNFTVideoInfo.tokenId).send({from: account})
-          console.log(`receipt`,receipt);
+          if(preparingFragNFTVideoInfo.chain === '4') {
+               console.log(arrayMetadata);
+               const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
+               const receipt = await contract.methods.createCollection(arrayMetadata, preparingFragNFTVideoInfo.tokenId).send({from: account})
+               console.log(`receipt`,receipt);
+          }
+          else {
+               console.log("token id",preparingFragNFTVideoInfo.tokenId);
+               const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS_BSC)
+               const receipt = await contract.methods.createCollection(arrayMetadata, preparingFragNFTVideoInfo.tokenId).send({from: account})
+               console.log(`receipt video`,receipt);
+          }
      }
      useEffect(() => {
           console.log(videoBase64Frag);
-          console.log(testMetadata);
-     }, [testMetadata, videoBase64Frag])
+          console.log(base64VideoAndImage);
+     }, [base64VideoAndImage, videoBase64Frag])
      return (
           <Modal show={showModalFragmentVideo} size='xl'>
                <Modal.Header closeButton>
@@ -118,7 +129,7 @@ export default function ModalFragmentVideo() {
                                                   />
                                                   <input 
                                                        type="file" 
-                                                       onChange={(e) => setTestMetadata([...testMetadata, {
+                                                       onChange={(e) => setBase64VideoAndImage([...base64VideoAndImage, {
                                                             index,
                                                             fileImage: e.target.files[0],
                                                             base64Video: item
@@ -131,7 +142,7 @@ export default function ModalFragmentVideo() {
                          </div>
                     </div>
                     <Button onClick={handleFragVideo}>Xem trước</Button>
-                    <Button onClick={ok}>Phân mảnh</Button>
+                    <Button onClick={handleCreateFragVideo}>Phân mảnh</Button>
                </Modal.Body>
           </Modal>
      )

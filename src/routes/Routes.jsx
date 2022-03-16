@@ -11,7 +11,7 @@ export default function Routes() {
           <Route path='/' exact component={CreateNFT}/>
           <Route path='/my-nft' exact component={MyNFT}/>
           <Route path='/market-place' exact component={Marketplace}/>
-          <Route exact path="/detail/:id" component={NFTDetail}/>
+          <Route exact path="/detail/:id/:chain" component={NFTDetail}/>
           <Route exact path="/swap-face" component={SwapFace}/>
      </Switch>
      )

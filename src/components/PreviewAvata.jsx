@@ -1,9 +1,10 @@
 import React, { useState, useContext, useRef} from 'react'
 import { NFTContext } from '../contexts/NFTContext'
+import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
 import ReactPlayer from 'react-player'
 // import { contractABI } from '../abi'
 import { NFTAPI } from '../abiContract'
-import { TOKEN_CONTRACT_ADDRESS } from '../constants/address'
+import { TOKEN_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS_BSC } from '../constants/address'
 import {Moralis} from 'moralis'
 import { useMoralisFile } from 'react-moralis'
 import axios from 'axios'
@@ -19,9 +20,6 @@ export default function PreviewAvata() {
      const refRorate = useRef(null)
      const {
           options,
-          cloudInaryVideo, setCloudInaraVideo,
-          blobLinkVideo, setBlobLinkVideo,
-          previewImageForVideo, setPreviewImageForVideo,
           EYES, eye, 
           HEADDRESS, headdress, 
           PHONE, phone, 
@@ -30,10 +28,56 @@ export default function PreviewAvata() {
           ACCESSORIES, accessories,
           BACKGROUND, background,
           backgroundByUser,
-          phoneByUser,
           mouthByUser, setMouthByUser,
-          result, web3Api, account
+          result
+     } = useContext(AvatartNFTContext)
+     const {
+          cloudInaryVideo, setCloudInaraVideo,
+          blobLinkVideo, setBlobLinkVideo,
+          previewImageForVideo, setPreviewImageForVideo,
+          web3Api, account, createNFTRinkeby,
+          createNFTBsc
      } = useContext(NFTContext)
+     console.log({web3Api});
+     const createMetadata = async (composite) => {
+          if(composite.data.success) {
+               //Upload image composite to IPFS
+               const res = await axios.post('http://localhost:5000/uploadImage')
+               console.log("Upload image composite to IFPS",res);
+               //Create Metadata
+               if(res.data.success) {
+                    const metadata = { 
+                         image: res.data.image,
+                         parentTokenId: 0,
+                    };
+                    const nftFileMetadataFile = new Moralis.File(
+                         "metadata.json", 
+                         {
+                              base64 : btoa(JSON.stringify(metadata))
+                         }
+                    );
+                    await nftFileMetadataFile.saveIPFS();
+                    const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
+                    console.log("metadata",nftFileMetadataFilePath);
+                    return nftFileMetadataFilePath
+               }
+          }
+     }
+     const switchNetWorkCreateNFT = async (nftFileMetadataFilePath) => {
+          if(web3Api.provider.networkVersion === '4') {
+               console.log("Tạo NFT ở mảng rinkeby",web3Api.provider.networkVersion);
+               await createNFTRinkeby(nftFileMetadataFilePath, 0)
+          }
+          else {
+               console.log("Tạo NFT ở mạng bsc testnet",web3Api.provider.networkVersion);
+               await createNFTBsc(nftFileMetadataFilePath, 0)
+          }
+     }
+     const successToast = async (id, receipt) => {
+          if(receipt.status) {
+               toast.update(id, { render: "Tạo NFT thành công", type: "success", isLoading: false, autoClose: 5000});
+          }
+     }
      const createNFT = async () => {
           const id = toast.loading("Đang tạo NFT.....")
           if(backgroundByUser.boolean && !mouthByUser.boolean) {
@@ -45,33 +89,9 @@ export default function PreviewAvata() {
                     {result: result , backgroundByUser: backgroundFileImage._ipfs}
                )
                console.log("composite background",composite);
-               if(composite.data.success) {
-                    //Upload image composite to IPFS
-                    const res = await axios.post('http://localhost:5000/uploadImage')
-                    console.log("Upload image composite to IFPS",res);
-                    //Create Metadata
-                    if(res.data.success) {
-                         const metadata = { 
-                              image: res.data.image,
-                              parentTokenId: 0,
-                         };
-                         const nftFileMetadataFile = new Moralis.File(
-                              "metadata.json", 
-                              {
-                                   base64 : btoa(JSON.stringify(metadata))
-                              }
-                         );
-                         await nftFileMetadataFile.saveIPFS();
-                         const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
-                         console.log("metadata",nftFileMetadataFilePath);
-                         const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-                         const receipt = await contract.methods.createNFT(nftFileMetadataFilePath, 0).send({from: account})
-                         console.log("receipt",receipt);
-                         if(receipt.status) {
-                              toast.update(id, { render: "Tạo NFT thành công", type: "success", isLoading: false, autoClose: 5000});
-                         }
-                    }
-               }
+               const nftFileMetadataFilePath = await createMetadata(composite)
+               const receipt = await switchNetWorkCreateNFT(nftFileMetadataFilePath)
+               successToast(id, receipt)
           }
           else if(mouthByUser.boolean && !backgroundByUser.boolean) {
                let linkImage
@@ -101,31 +121,9 @@ export default function PreviewAvata() {
                               {result: result , mouthByUser: true}
                          )
                          console.log("composite mouth",composite);
-                         if(composite.data.success) {
-                              const res = await axios.post('http://localhost:5000/uploadImage')
-                              console.log(res);
-                              if(res.data.success) {
-                                   const metadata = { 
-                                        image: res.data.image,
-                                        parentTokenId: 0,
-                                   };
-                                   const nftFileMetadataFile = new Moralis.File(
-                                        "metadata.json", 
-                                        {
-                                             base64 : btoa(JSON.stringify(metadata))
-                                        }
-                                   );
-                                   await nftFileMetadataFile.saveIPFS();
-                                   const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
-                                   console.log("metadata",nftFileMetadataFilePath);
-                                   const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-                                   const receipt = await contract.methods.createNFT(nftFileMetadataFilePath,0).send({from: account})
-                                   console.log("receipt",receipt);
-                                   if(receipt.status) {
-                                        toast.update(id, { render: "Tạo NFT thành công", type: "success", isLoading: false, autoClose: 5000});
-                                   }
-                              }
-                         }
+                         const nftFileMetadataFilePath = await createMetadata(composite)
+                         const receipt = await switchNetWorkCreateNFT(nftFileMetadataFilePath)
+                         successToast(id, receipt)
                     }
                }  
           }
@@ -152,36 +150,15 @@ export default function PreviewAvata() {
                               {result: result , mouthByUser: true, backgroundByUser: backgroundFileImage._ipfs}
                          )
                          console.log("composite background mouth",composite);
-                         if(composite.data.success) {
-                              const res = await axios.post('http://localhost:5000/uploadImage')
-                              console.log(res);
-                              if(res.data.success) {
-                                   const metadata = { 
-                                        image: res.data.image,
-                                        parentTokenId: 0,
-                                   };
-                                   const nftFileMetadataFile = new Moralis.File(
-                                        "metadata.json", 
-                                        {
-                                             base64 : btoa(JSON.stringify(metadata))
-                                        }
-                                   );
-                                   await nftFileMetadataFile.saveIPFS();
-                                   const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
-                                   console.log("metadata",nftFileMetadataFilePath);
-                                   const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-                                   const receipt = await contract.methods.createNFT(nftFileMetadataFilePath,0).send({from: account})
-                                   console.log("receipt",receipt);
-                                   if(receipt.status) {
-                                        toast.update(id, { render: "Tạo NFT thành công", type: "success", isLoading: false, autoClose: 5000});
-                                   }
-                              }
-                         }
+                         const nftFileMetadataFilePath = await createMetadata(composite)
+                         const receipt = await switchNetWorkCreateNFT(nftFileMetadataFilePath)
+                         successToast(id, receipt)
                     }
                }  
 
           }
           else {
+               console.log("basic");
                const composite = await axios.post('http://localhost:5000/composite', 
                     {result: result}
                )
@@ -189,30 +166,13 @@ export default function PreviewAvata() {
                if(composite.data.success) {
                     const res = await axios.post('http://localhost:5000/uploadImage')
                     console.log("upload image",res);
-                    if(res.data.success) {
-                         const metadata = { 
-                              image: res.data.image,
-                              parentTokenId: 0,
-                         };
-                         const nftFileMetadataFile = new Moralis.File(
-                              "metadata.json", 
-                              {
-                                   base64 : btoa(JSON.stringify(metadata))
-                              }
-                         );
-                         await nftFileMetadataFile.saveIPFS();
-                         const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
-                         console.log("metadata",nftFileMetadataFilePath);
-                         const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-                         const receipt = await contract.methods.createNFT(nftFileMetadataFilePath,0).send({from: account})
-                         console.log("receipt",receipt);
-                         if(receipt.status) {
-                              toast.update(id, { render: "Tạo NFT thành công", type: "success", isLoading: false, autoClose: 5000});
-                         }
-                    }
+                    const nftFileMetadataFilePath = await createMetadata(composite)
+                    const receipt = await switchNetWorkCreateNFT(nftFileMetadataFilePath)
+                    successToast(id, receipt)
                }
           }
      }
+
      
      const createNFTVideo = async () => {
           let formData = new FormData()
@@ -246,6 +206,42 @@ export default function PreviewAvata() {
                const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
                console.log("metadata",nftFileMetadataFilePath);
                const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
+               const receipt = await contract.methods.createNFT(nftFileMetadataFilePath, 0).send({from: account})
+               console.log("receipt",receipt);
+          }
+     }
+     const createNFTVideoBsc = async () => {
+          let formData = new FormData()
+          formData.append('file', cloudInaryVideo.file)
+          formData.append('upload_preset', "m3ghszb7")
+          const res = await axios.post('https://api.cloudinary.com/v1_1/dcahbrrcb/video/upload', formData ,{
+               headers: {
+                    'Content-Type' : 'application/x-www-form-urlencoded',
+               }
+          })
+          console.log({res});
+          setCloudInaraVideo({
+               ...cloudInaryVideo,
+               link: res.data.url
+          })
+          const previewImage = await new saveFile("previewImage.png", previewImageForVideo.file, {saveIPFS: true})
+          console.log("PreviewImage",previewImage._ipfs);
+          if(res.data) {
+               const metadata = { 
+                    image: previewImage._ipfs,
+                    animation_url: res.data.url,
+                    parentTokenId: 0,
+               };
+               const nftFileMetadataFile = new Moralis.File(
+                    "metadata.json", 
+                    {
+                         base64 : btoa(JSON.stringify(metadata))
+                    }
+               );
+               await nftFileMetadataFile.saveIPFS();
+               const nftFileMetadataFilePath = nftFileMetadataFile.ipfs();
+               console.log("metadata",nftFileMetadataFilePath);
+               const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS_BSC)
                const receipt = await contract.methods.createNFT(nftFileMetadataFilePath, 0).send({from: account})
                console.log("receipt",receipt);
           }
@@ -323,9 +319,6 @@ export default function PreviewAvata() {
                                    : '')
                               }
                               {
-                                   phoneByUser.boolean 
-                                   ? <img src={phoneByUser.image} alt="" /> 
-                                   :
                                    PHONE.map(item => item.id === phone 
                                    ?
                                    <div key={item.image} className='preview-image z-index2'>
@@ -380,8 +373,17 @@ export default function PreviewAvata() {
                } 
                
                {mouthByUser.boolean && <button onClick={handleRemoveBg} className='create-nft-button btn btn-primary'>Xóa phông</button>}
-               {options !== 8 && <button onClick={createNFT} className='create-nft-button btn btn-primary'>Create NFT</button>}
-               {options == 8 && <button onClick={createNFTVideo} className='create-nft-button btn btn-primary'>Create NFT Video</button>}
+               {
+               options !== 8 && 
+               <button onClick={createNFT} className='create-nft-button btn btn-primary'>Create NFT</button>
+               }
+
+               {
+               options == 8 && 
+                    web3Api.provider.chain === '4' ? 
+                    <button onClick={createNFTVideo} className='create-nft-button btn btn-primary'>Create NFT Video</button> : 
+                    <button onClick={createNFTVideoBsc} className='create-nft-button btn btn-primary'>Create NFT Video</button> 
+               }
           </div>
      )
 }

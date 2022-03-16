@@ -1,5 +1,6 @@
 import React, {useContext} from 'react'
 import CheckIcon from '../assets/images/bx-check.svg'
+import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
 import { NFTContext } from '../contexts/NFTContext'
 
 export default function Background() {
@@ -8,7 +9,8 @@ export default function Background() {
           BACKGROUND, background, setBackground, 
           backgroundByUser, setBackgroundByUser,
           result, setResult
-     } = useContext(NFTContext)
+     } = useContext(AvatartNFTContext)
+
      const handleBackGround = (id) => {
           setBackground(id)
           setResult({...result, background: id})

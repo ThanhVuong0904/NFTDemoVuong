@@ -7,13 +7,14 @@ import { useMoralisFile } from 'react-moralis'
 import { NFTContext } from '../contexts/NFTContext'
 import {MarketplaceABI} from '../abiMarket'
 import { NFTAPI } from '../abiContract'
-import { TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS } from '../constants/address'
+import { TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS_BSC, MARKET_CONTRACT_ADDRESS_BSC } from '../constants/address'
 import ETHIcon from '../assets/images/eth_logo.svg'
 import PlayIcon from '../assets/images/bx-play.svg'
 import ModalForSale from '../components/ModalForSale'
 import DotIcon from '../assets/images/bx-dots-horizontal-rounded.svg'
 import ModalFragment from '../components/ModalFragment'
 import ModalFragmentVideo from '../components/ModalFragmentVideo';
+import BNBIcon from '../assets/images/bnb_logo.png'
 
 export default function MyNFT() {
      const { 
@@ -23,7 +24,8 @@ export default function MyNFT() {
           preparingFragNFTInfo, setPreparingFragNFTInfo,
           setShowPreparingFragNFTInfo,
           preparingFragNFTVideoInfo, setPreparingFragNFTVideoInfo,
-          showModalFragmentVideo, setShowModalFragmentVideo
+          showModalFragmentVideo, setShowModalFragmentVideo, web3,
+          checkNetWork
 	} = useContext(NFTContext);
 
      const {
@@ -38,94 +40,180 @@ export default function MyNFT() {
 
      const [playVideo, setPlayVideo] = useState(null)
      const getUserNFTs = async () => {
-          const owner = await Moralis.Cloud.run('getUserNFTs', {
+          const ownerRinkeby = await Moralis.Cloud.run('getUserNFTs', {
                account_address: account,
                token_address: TOKEN_CONTRACT_ADDRESS
           })
-          console.log({owner});
-          fetchData(owner)
-     }
-     
-     const fetchData = async (userNFT) => {
-          userNFT.map(async (item, index) => {
-               console.log(item);
-               setMyNFT([])
-               //Tìm item đang bán
-               //Nếu đang bán thì gán uid = id ở trong market
-               //Nếu đang bán thì tìm kiếm giá đang bán gán vào price
-               const itemForSale = new Moralis.Query('ItemsForSale')
-               itemForSale.equalTo('tokenId', item.tokenId)
-               const result = await itemForSale.first()
-               console.log(result);
-               
-               const createItem = new Moralis.Query('CreateNFTs')
-               createItem.equalTo('tokenId', item.tokenId)
-               const createItemResult = await createItem.first()
-               console.log({createItemResult});
 
-               await fetch(item.tokenUri)
-               .then(res => res.json())
-               .then(data => setMyNFT(prev => 
-                    [
-                         ...prev, 
-                         {
-                              uid: result && result.attributes.tokenId === item.tokenId && result.attributes.uid,
-                              // uid: item.uid,
-                              tokenId: item.tokenId,
-                              symbol: item.symbol,
-                              image: data.image,
-                              name: item.name,
-                              price: result && result.attributes.tokenId === item.tokenId && result.attributes.askingPrice,
-                              isFrag: createItemResult.attributes.isFrag,
-                              amountFrag: createItemResult.attributes.amountFrag,
-                              attributes: data.attributes,
-                              animation_url: data.animation_url && data.animation_url 
-                         }
-                    ]
-               ))
+          console.log({ownerRinkeby});
+          const ownerBsc = await Moralis.Cloud.run('getUserNFTsBSC', {
+               account_address: account,
+               token_address: TOKEN_CONTRACT_ADDRESS_BSC
           })
+          console.log({ownerBsc});
+          fetchData({rinkeby: ownerRinkeby})
+          fetchData({binance: ownerBsc})
+          
+     }
+     useEffect(() => {
+          account && getUserNFTs()
+     }, [account])
+     const fetchData = async (userNFT) => {
+          console.log(userNFT);
+          if(userNFT.rinkeby) {
+               userNFT.rinkeby.map(async (item, index) => {
+                    setMyNFT([])
+                    //Tìm item đang bán
+                    //Nếu đang bán thì gán uid = id ở trong market
+                    //Nếu đang bán thì tìm kiếm giá đang bán gán vào price
+                    const itemForSale = new Moralis.Query('ItemsForSale')
+                    itemForSale.equalTo('tokenId', item.tokenId)
+                    const result = await itemForSale.first()
+                    console.log(result);
+                    
+                    const createItem = new Moralis.Query('CreateNFTs')
+                    createItem.equalTo('tokenId', item.tokenId)
+                    const createItemResult = await createItem.first()
+                    console.log({createItemResult});
+     
+                    
+                    await fetch(item.tokenUri)
+                    .then(res => res.json())
+                    .then(data => setMyNFT(prev => 
+                         [
+                              ...prev, 
+                              {
+                                   uid: result && result.attributes.tokenId === item.tokenId && result.attributes.uid,
+                                   // uid: item.uid,
+                                   tokenId: item.tokenId,
+                                   symbol: item.symbol,
+                                   image: data.image,
+                                   name: item.name,
+                                   price: result && result.attributes.tokenId === item.tokenId && result.attributes.askingPrice,
+                                   isFrag: createItemResult.attributes.isFrag,
+                                   amountFrag: createItemResult.attributes.amountFrag,
+                                   attributes: data.attributes,
+                                   animation_url: data.animation_url && data.animation_url ,
+                                   blockchain: 'Rinkeby',
+                                   chain: '4',
+                                   hex: '0x4'
+                              }
+                         ]
+                    ))
+                    
+                    
+               })
+          }
+          if(userNFT.binance) {
+               userNFT.binance.map(async (item, index) => {
+                    setMyNFT([])
+                    //Tìm item đang bán
+                    //Nếu đang bán thì gán uid = id ở trong market
+                    //Nếu đang bán thì tìm kiếm giá đang bán gán vào price
+                    const itemForSale = new Moralis.Query('ItemsForSaleBsc')
+                    itemForSale.equalTo('tokenId', item.tokenId)
+                    const result = await itemForSale.first()
+                    console.log(result);
+                    
+                    const createItem = new Moralis.Query('CreateNFTsBsc')
+                    createItem.equalTo('tokenId', item.tokenId)
+                    const createItemResult = await createItem.first()
+                    console.log({createItemResult});
+     
+                    
+                    await fetch(item.tokenUri)
+                    .then(res => res.json())
+                    .then(data => setMyNFT(prev => 
+                         [
+                              ...prev, 
+                              {
+                                   uid: result && result.attributes.tokenId === item.tokenId && result.attributes.uid,
+                                   // uid: item.uid,
+                                   tokenId: item.tokenId,
+                                   symbol: item.symbol,
+                                   image: data.image,
+                                   name: item.name,
+                                   price: result && result.attributes.tokenId === item.tokenId && result.attributes.askingPrice,
+                                   isFrag: createItemResult.attributes.isFrag,
+                                   amountFrag: createItemResult.attributes.amountFrag,
+                                   attributes: data.attributes,
+                                   animation_url: data.animation_url && data.animation_url,
+                                   blockchain: 'Binance Testnet' ,
+                                   chain: '97',
+                                   hex: '0x61'
+                              }
+                         ]
+                    ))
+               })
+          }
      }
      const handleSell = async () => {
-          console.log(itemForSale.tokenId);
+          await checkNetWork(itemForSale.chain, itemForSale.hex)
           //Mở modal
           setShowForSale(true)
-          //Check xem đã approve chưa, nếu chưa thì approve
-          //Nếu rồi thì rao bán
-          await ensureMarketplaceIsApproved()
-          
-          const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
-          const priceToWei = await web3Api.web3.utils.toWei(itemForSale.price)
-          //Add NFT vào market
-          const receipt = 
-               await contract.methods.addItemToMarket(itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS, priceToWei)
-               .send({from: account})
-          console.log("addItemToMarket",receipt);
+          if(itemForSale.chain === 'Rinkeby') {
+               //Check xem đã approve chưa, nếu chưa thì approve
+               //Nếu rồi thì rao bán
+               await ensureMarketplaceIsApproved(TOKEN_CONTRACT_ADDRESS, MARKET_CONTRACT_ADDRESS)
+               
+               const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
+               const priceToWei = await web3Api.web3.utils.toWei(itemForSale.price)
+               //Add NFT vào market
+               const receipt = 
+                    await contract.methods.addItemToMarket(itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS, priceToWei)
+                    .send({from: account})
+               console.log("addItemToMarket rinkeby",receipt);
+          }
+          else {
+               //Check xem đã approve chưa, nếu chưa thì approve
+               //Nếu rồi thì rao bán
+               await ensureMarketplaceIsApproved(TOKEN_CONTRACT_ADDRESS_BSC, MARKET_CONTRACT_ADDRESS_BSC)
+               
+               const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS_BSC)
+               const priceToWei = await web3Api.web3.utils.toWei(itemForSale.price)
+               //Add NFT vào market
+               const receipt = 
+                    await contract.methods.addItemToMarket(itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS_BSC, priceToWei)
+                    .send({from: account})
+               console.log("addItemToMarket bsc",receipt);
+          }
      }
      //Open ModalForSale
      const handleForSale = async (item) => {
+          await checkNetWork(item.chain, item.hex)
           setShowForSale(true)
           setItemForSale({
                ...itemForSale,
                tokenId: item.tokenId,
-               image: item.image
+               image: item.image,
+               chain: item.blockchain,
+               hex: item.hex
           })
      }
      const handleCancelSale = async (nft) => {
+          await checkNetWork(nft.chain, nft.hex)
           console.log("handleCancelSale",nft);
-          const contractMarket = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
-          const receipt = await contractMarket.methods.cancel(nft.uid).send({from: account});
-          console.log("handleCancelSale receipt",receipt);
+          if(nft.chain === '4') {
+               const contractMarket = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
+               const receipt = await contractMarket.methods.cancel(nft.uid).send({from: account});
+               console.log("handleCancelSale receipt",receipt);
+          }
+          else {
+               const contractMarket = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS_BSC)
+               const receipt = await contractMarket.methods.cancel(nft.uid).send({from: account});
+               console.log("handleCancelSale receipt",receipt);
+          }
      }
 
-     const ensureMarketplaceIsApproved = async () => {
-          const contractToken = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS);
+     const ensureMarketplaceIsApproved = async (nftContract, marketContract) => {
+          const contractToken = await new web3Api.web3.eth.Contract(NFTAPI, nftContract);
           console.log("contractToken", contractToken);
           const approvedAddress = await contractToken.methods.isApprovedForAll(
-               account, MARKET_CONTRACT_ADDRESS
+               account, marketContract
           ).call({from: account});
           console.log(approvedAddress);
           if (!approvedAddress){
-               await contractToken.methods.setApprovalForAll(MARKET_CONTRACT_ADDRESS, true).send({from: account})
+               await contractToken.methods.setApprovalForAll(marketContract, true).send({from: account})
           }
      }
      const showMoreOptionList = (index) => {
@@ -136,32 +224,39 @@ export default function MyNFT() {
      }
 
      //Open ModalFragment
-     const handleOpenModal = (id, image, animationUrl) => {
-          console.log({animationUrl});
-          if(animationUrl === undefined) {
+     const handleOpenModal = (nft) => {
+          console.log("id", nft);
+          if(nft.animation_url === undefined) {
+               console.log("Frag Image");
                setShowPreparingFragNFTInfo(true)
                setPreparingFragNFTInfo({
                     ...preparingFragNFTInfo,
-                    tokenId: id,
-                    image: image,
+                    tokenId: nft.tokenId,
+                    image: nft.image,
+                    chain: nft.chain,
+                    hex: nft.hex
                })
           }
           else {
+               console.log("Frag Video");
                setShowModalFragmentVideo(true)
                setPreparingFragNFTVideoInfo({
                     ...preparingFragNFTVideoInfo, 
-                    tokenId: id,
-                    linkVideo: animationUrl
+                    tokenId: nft.tokenId,
+                    linkVideo: nft.animation_url,
+                    chain: nft.chain,
+                    hex: nft.hex
                })
           }
      }
 
      const handleFrag = async () => {
-          console.log(preparingFragNFTInfo);
+          await checkNetWork(preparingFragNFTInfo.chain, preparingFragNFTInfo.hex)
+          console.log("acc",account);
           const id = toast.loading("Đang tạo phân mảnh NFT.....")
           let array = []
           array = await Promise.all(preparingFragNFTInfo.arrayImages.map(async (item, index) => {
-               const cutImagesIpfs = await new saveFile("mouth.png", {base64: item}, {saveIPFS: true})
+               const cutImagesIpfs = await new saveFile("fragImage.png", {base64: item}, {saveIPFS: true})
                console.log("Hình phân ảnh",cutImagesIpfs._ipfs);
                const metadata = { 
                     image: cutImagesIpfs._ipfs ,
@@ -194,16 +289,27 @@ export default function MyNFT() {
           })
           )
           console.log("Day la mảng",array);
-          const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-          const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: account})
-          console.log(`receipt`,receipt);
-          if(receipt.status) {
-               toast.update(id, { render: "Phân mảnh NFT thành công", type: "success", isLoading: false, autoClose: 5000});
+          if(preparingFragNFTInfo.chain === '4') {
+               console.log("preparingFragNFTInfo.tokenId", preparingFragNFTInfo.tokenId);
+               console.log('account', account);
+               const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
+               const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: account})
+               console.log(`receipt`,receipt);
+               if(receipt.status) {
+                    toast.update(id, { render: "Phân mảnh NFT thành công", type: "success", isLoading: false, autoClose: 5000});
+               }
+          }
+          else {
+               console.log('account', account);
+               const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS_BSC)
+               const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: account})
+               console.log(`receipt`,receipt);
+               if(receipt.status) {
+                    toast.update(id, { render: "Phân mảnh NFT thành công", type: "success", isLoading: false, autoClose: 5000});
+               }
           }
      }
-     useEffect(() => {
-          account && getUserNFTs()
-     }, [account])
+     
      useEffect(() => {
           console.log(myNFT);
      }, [myNFT])
@@ -275,7 +381,10 @@ export default function MyNFT() {
                                              ? 
                                              <div className='d-flex align-items-center'>
                                                   <p className='text-secondary fw-600'>{(item.price / 1e18).toFixed(5)}</p>
-                                                  <img src={ETHIcon} alt="" className='eth-logo'/>
+                                                  {item.blockchain === 'Rinkeby' ? 
+                                                  <img src={ETHIcon} alt="" className='eth-logo'/> 
+                                                  : <img src={BNBIcon} alt="" className='eth-logo'/> 
+                                                  }
                                              </div> 
                                                   : ''
                                              }
@@ -318,16 +427,12 @@ export default function MyNFT() {
                                                   !item.isFrag && 
                                                   <div 
                                                        className='more-options-item'
-                                                       onClick={() => handleOpenModal(
-                                                            item.tokenId, 
-                                                            item.image,
-                                                            item.animation_url 
-                                                       )}
+                                                       onClick={() => handleOpenModal(item)}
                                                   >
                                                        Phân mảnh
                                                   </div>
                                              }
-                                             <Link to={`/detail/${item.tokenId}`}>
+                                             <Link to={`/detail/${item.tokenId}/${item.chain}`}>
                                                   <div 
                                                        className='more-options-item'
                                                   >

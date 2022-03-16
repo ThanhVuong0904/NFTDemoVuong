@@ -6,7 +6,7 @@ import App from './App';
 import './css/style.css'
 import 'react-toastify/dist/ReactToastify.css';
 import NTFContextProvider from './contexts/NFTContext'
-
+import AvatartNFTContextProvider from './contexts/AvatarNFTContext'
 ReactDOM.render(
   <React.StrictMode>
     <MoralisProvider 
@@ -14,7 +14,9 @@ ReactDOM.render(
       serverUrl='https://cgemtoilkcy1.usemoralis.com:2053/server'
     >
       <NTFContextProvider>
-        <App />
+        <AvatartNFTContextProvider>
+          <App />
+        </AvatartNFTContextProvider>
       </NTFContextProvider>
     </MoralisProvider>
   </React.StrictMode>,

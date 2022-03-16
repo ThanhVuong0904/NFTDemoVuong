@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
 import { NFTContext } from '../contexts/NFTContext'
 import CheckIcon from '../assets/images/bx-check.svg'
+import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
 export default function Phone() {
-     const {options, PHONE, phone, setPhone, result, setResult, phoneByUser, setPhoneByUser} = useContext(NFTContext)
+     const {options, PHONE, phone, setPhone, result, setResult, phoneByUser, setPhoneByUser} = useContext(AvatartNFTContext)
      const handlePhone = (id) => {
           setPhone(id)
           setResult({...result, phone: id})
