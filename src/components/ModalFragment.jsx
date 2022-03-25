@@ -15,12 +15,17 @@ export default function ModalFragment({onFrag}) {
      } = useContext(NFTContext)
      const handleClose = () => {
           setShowPreparingFragNFTInfo(false)
+          setPreparingFragNFTInfo({
+               tokenId: null,
+               image: null,
+               arrayImages: null,
+          })
      }
      //
      const handleCutImage = async (qtyFrag) => {
           console.log("modal",preparingFragNFTInfo);
           console.log("qtyFrag", qtyFrag);
-          var image = new Image
+          var image = new Image()
           image.crossOrigin = "anonymous"
           image.src = preparingFragNFTInfo.image
 
@@ -113,6 +118,7 @@ export default function ModalFragment({onFrag}) {
                                    src={preparingFragNFTInfo.image} 
                                    crossOrigin="anonymous" 
                                    ref={imgRef}
+                                   alt=""
                               />
                               <p className='text-secondary fw-600 mt-2 mb-2'>Token ID: {preparingFragNFTInfo.tokenId}</p>
                               {/* <p>Kích thước{preparingFragNFTInfo.width}x{preparingFragNFTInfo.height}</p> */}

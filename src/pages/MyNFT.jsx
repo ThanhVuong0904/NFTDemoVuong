@@ -161,7 +161,7 @@ export default function MyNFT() {
                //Add NFT vào market
                const receipt = 
                     await contract.methods.addItemToMarket(itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS, priceToWei)
-                    .send({from: account})
+                    .send({from: web3Api.currentAccount})
                console.log("addItemToMarket rinkeby",receipt);
           }
           else {
@@ -174,7 +174,7 @@ export default function MyNFT() {
                //Add NFT vào market
                const receipt = 
                     await contract.methods.addItemToMarket(itemForSale.tokenId, TOKEN_CONTRACT_ADDRESS_BSC, priceToWei)
-                    .send({from: account})
+                    .send({from: web3Api.currentAccount})
                console.log("addItemToMarket bsc",receipt);
           }
      }
@@ -195,12 +195,12 @@ export default function MyNFT() {
           console.log("handleCancelSale",nft);
           if(nft.chain === '4') {
                const contractMarket = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
-               const receipt = await contractMarket.methods.cancel(nft.uid).send({from: account});
+               const receipt = await contractMarket.methods.cancel(nft.uid).send({from: web3Api.currentAccount});
                console.log("handleCancelSale receipt",receipt);
           }
           else {
                const contractMarket = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS_BSC)
-               const receipt = await contractMarket.methods.cancel(nft.uid).send({from: account});
+               const receipt = await contractMarket.methods.cancel(nft.uid).send({from: web3Api.currentAccount});
                console.log("handleCancelSale receipt",receipt);
           }
      }
@@ -210,10 +210,10 @@ export default function MyNFT() {
           console.log("contractToken", contractToken);
           const approvedAddress = await contractToken.methods.isApprovedForAll(
                account, marketContract
-          ).call({from: account});
+          ).call({from: web3Api.currentAccount});
           console.log(approvedAddress);
           if (!approvedAddress){
-               await contractToken.methods.setApprovalForAll(marketContract, true).send({from: account})
+               await contractToken.methods.setApprovalForAll(marketContract, true).send({from: web3Api.currentAccount})
           }
      }
      const showMoreOptionList = (index) => {
@@ -293,7 +293,7 @@ export default function MyNFT() {
                console.log("preparingFragNFTInfo.tokenId", preparingFragNFTInfo.tokenId);
                console.log('account', account);
                const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-               const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: account})
+               const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: web3Api.currentAccount})
                console.log(`receipt`,receipt);
                if(receipt.status) {
                     toast.update(id, { render: "Phân mảnh NFT thành công", type: "success", isLoading: false, autoClose: 5000});
@@ -302,7 +302,7 @@ export default function MyNFT() {
           else {
                console.log('account', account);
                const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS_BSC)
-               const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: account})
+               const receipt = await contract.methods.createCollection(array, preparingFragNFTInfo.tokenId).send({from: web3Api.currentAccount})
                console.log(`receipt`,receipt);
                if(receipt.status) {
                     toast.update(id, { render: "Phân mảnh NFT thành công", type: "success", isLoading: false, autoClose: 5000});
@@ -406,7 +406,7 @@ export default function MyNFT() {
                                              }
                                              <a 
                                                   href={`https://testnets.opensea.io/assets/0x0bd9e2249f7d0b14dbb45985d5ce027739a6269c/${item.tokenId}`}
-                                                  target='_blank'
+                                                  target='_blank' rel="noreferrer"
                                              >
                                                   <div 
                                                        className='more-options-item'

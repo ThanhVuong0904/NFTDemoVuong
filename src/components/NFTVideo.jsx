@@ -1,15 +1,20 @@
-import React, {useContext} from 'react'
+import React, {useContext, useState} from 'react'
+import {Moralis} from'moralis';
 import { NFTContext } from '../contexts/NFTContext'
 import axios from 'axios';
 import { AvatartNFTContext } from '../contexts/AvatarNFTContext';
 
 export default function NFTVideo() {
+     const REGEX_URL = '^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$'
      const {
           cloudInaryVideo, setCloudInaraVideo,
+          youtubeUrl, setYoutubeUrl,
           blobLinkVideo, setBlobLinkVideo,
           durationVideo, setDurationVideo,
+          fromComputer, setFromComputer,
           previewImageForVideo, setPreviewImageForVideo
      } = useContext(NFTContext)
+
      const {
           options,
      } = useContext(AvatartNFTContext)
@@ -38,10 +43,23 @@ export default function NFTVideo() {
                file
           })
      }
+     const handleChangeMethod = (e) => {
+          console.log("Change");
+          setFromComputer(!fromComputer)
+     }
      return (
           <div className={`content-list video ${options === 8 ? 'active' : ''}`}>
-               <label htmlFor="">Chọn video</label>
-               <input type="file" onChange={handleChangeVideo}/>
+               <select name="" id="" onChange={handleChangeMethod}>
+                    <option value="">From Computer</option>
+                    <option value="">From Youtube</option>
+               </select>
+               {
+                    fromComputer ? <>
+                         <label htmlFor="">Chọn video</label>
+                         <input type="file" placeholder='Upload' onChange={handleChangeVideo}/>
+                    </>
+               : <input type="text" placeholder='Link video youtube' onChange={(e) => setYoutubeUrl(e.target.value)}/>
+               }
                <label htmlFor="">Chọn Preview Image</label>
                <input type="file" onChange={handleChangePreviewImageForVideo}/>
 

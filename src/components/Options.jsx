@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
-import { NFTContext } from '../contexts/NFTContext'
+
 const OPTIONS = [
      {id: 1, display: 'Eyes (6)'},
      {id: 2, display: 'Headdress (5)'},
@@ -10,6 +10,7 @@ const OPTIONS = [
      {id: 6, display: 'Accessories (6)'},
      {id: 7, display: 'Background (7)'},
      {id: 8, display: 'Video'},
+     {id: 9, display: 'Upload Image'},
 ]
 export default function Options() {
      const {options, setOptions} = useContext(AvatartNFTContext)

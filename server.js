@@ -4,7 +4,7 @@ const cors = require('cors')
 const fs = require('fs')
 const axios  = require('axios')
 const cloudinary = require('cloudinary')
-const FormData = require('form-data');
+const youtubedl = require('youtube-dl-exec')
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path
 const ffmpeg = require('fluent-ffmpeg')
 ffmpeg.setFfmpegPath(ffmpegPath)
@@ -131,7 +131,29 @@ cloudinary.config({
      api_secret: process.env.CLOUD_API_SECRET,
 })
 
+app.post('/downloadYoutubeVideo', async (req, res) => {
+     const {url} = req.body
+     youtubedl(url, {
+          format: "best",
+          output: "youtube.mp4"
+     }).then(output => {
+          let promises = []
+          promises.push( new Promise( (res) => { 
+               fs.readFile(`./youtube.mp4`, (err, data) => {
+                    res(data.toString("base64"))
+               })
+          } ))
+          Promise.all(promises).then(data => {
+               fs.unlink(`./youtube.mp4`, (err, data) => {
+                    console.log(data);
+               })
+               return res.json({message: "Download", success: true, base64: data})
+          })
+     })
+})
+
 app.post('/fragmentVideo', async (req, res) => {
+     
      const {qty, duration, link} = req.body
      let timeEachVideo = duration / qty
      ffmpeg(link)
@@ -151,13 +173,9 @@ app.post('/fragmentVideo', async (req, res) => {
           if(!err) { console.log('conversion Done') }
                let promises = []
                for(var i = 0; i < qty; i++) {
-
-                    promises.push( new Promise( (res, rej) => { 
-
+                    promises.push( new Promise( (res) => { 
                          fs.readFile(`./out${i}.mp4`, (err, data) => {
-                              res(
-                                   data.toString("base64"),
-                              )
+                              res(data.toString("base64"))
                          })
                     } ))
                }
@@ -175,37 +193,37 @@ app.post('/fragmentVideo', async (req, res) => {
           }).run()
 })
 
-app.post('/uploadBase64Video', async (req, res) => {
-     const {arrayBase64Video} = req.body
-     let ipfsArray = []
-     for(var i = 0; i < arrayBase64Video.length; i++) {
-          ipfsArray.push({
-               path: `images/previewImageVideo${i}.png`,
-               content: arrayBase64Video[i]
-          })
-     }
-     console.log(ipfsArray);
-     // axios.post("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", 
-     //      ipfsArray,
-     //      {
-     //           headers: {
-     //                "X-API-KEY": 'k30Du9VUUJbgHG6db8QItgxGryCNwcw0KhZ1tfZz86e1LlabB44y1sMwEwqprYPr',
-     //                "Content-Type": "application/json",
-     //                "accept": "application/json"
-     //           }
-     //      }
-     // ).then( (response) => {
-     //      console.log(response.data);
-     //      return res.json({
-     //           success: true, 
-     //           image: response.data[0].path,
-     //           message: 'upload base64 video success'
-     //      })
-     // })
-     // .catch ( (error) => {
-     //      console.log(error)
-     // })
-})
+// app.post('/uploadBase64Video', async (req, res) => {
+//      const {arrayBase64Video} = req.body
+//      let ipfsArray = []
+//      for(var i = 0; i < arrayBase64Video.length; i++) {
+//           ipfsArray.push({
+//                path: `images/previewImageVideo${i}.png`,
+//                content: arrayBase64Video[i]
+//           })
+//      }
+//      console.log(ipfsArray);
+//      // axios.post("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder", 
+//      //      ipfsArray,
+//      //      {
+//      //           headers: {
+//      //                "X-API-KEY": 'k30Du9VUUJbgHG6db8QItgxGryCNwcw0KhZ1tfZz86e1LlabB44y1sMwEwqprYPr',
+//      //                "Content-Type": "application/json",
+//      //                "accept": "application/json"
+//      //           }
+//      //      }
+//      // ).then( (response) => {
+//      //      console.log(response.data);
+//      //      return res.json({
+//      //           success: true, 
+//      //           image: response.data[0].path,
+//      //           message: 'upload base64 video success'
+//      //      })
+//      // })
+//      // .catch ( (error) => {
+//      //      console.log(error)
+//      // })
+// })
 
 app.post('/composite', async (req, response) => {
      const {result, backgroundByUser, mouthByUser} = req.body

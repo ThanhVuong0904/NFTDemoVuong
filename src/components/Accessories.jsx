@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
 import CheckIcon from '../assets/images/bx-check.svg'
 import { AvatartNFTContext } from '../contexts/AvatarNFTContext'
-import { NFTContext } from '../contexts/NFTContext'
+
 
 export default function Accessories() {
      const {options, ACCESSORIES, accessories, setAccessories, result, setResult} = useContext(AvatartNFTContext)

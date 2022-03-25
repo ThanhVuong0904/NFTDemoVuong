@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useState } from 'react'
 import Eye1 from '../assets/images/eyes/Eyes Closed1.png'
 import Eye2 from '../assets/images/eyes/Eyes Normal1.png'
 import Eye3 from '../assets/images/eyes/Eyes Sleepy1.png'
@@ -143,6 +143,12 @@ const AvatartNFTContextProvider = ({children}) => {
           file: null,
           isRemoveBg: false
      })
+
+     const [imageByUser, setImageByUser] = useState({
+          boolean: false,
+          image: null,
+          file: null,
+     })
      const state = {
           options, setOptions,
           EYES, eye, setEye,
@@ -154,6 +160,7 @@ const AvatartNFTContextProvider = ({children}) => {
           ACCESSORIES, accessories, setAccessories,
           BACKGROUND, background, setBackground,
           backgroundByUser, setBackgroundByUser,
+          imageByUser, setImageByUser,
           result, setResult,
      }
      return (

@@ -103,13 +103,13 @@ export default function Marketplace() {
           if(nft.chain === '4') {
                const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS)
                const receipt = 
-                    await contract.methods.buyItem(nft.uid).send({from: account, value: nft.price})
+                    await contract.methods.buyItem(nft.uid).send({from: web3Api.currentAccount, value: nft.price})
                console.log("buyItem rinkeby",receipt);
           } 
           else {
                const contract = await new web3Api.web3.eth.Contract(MarketplaceABI, MARKET_CONTRACT_ADDRESS_BSC)
                const receipt = 
-                    await contract.methods.buyItem(nft.uid).send({from: account, value: nft.price})
+                    await contract.methods.buyItem(nft.uid).send({from: web3Api.currentAccount, value: nft.price})
                console.log("buyItem bsc",receipt);
           }
      }

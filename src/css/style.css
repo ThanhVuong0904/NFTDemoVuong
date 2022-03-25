@@ -298,7 +298,7 @@ a {
      object-fit: cover;
 }
 
-.eyes.active, .headdress.active, .phone.active, .mouth.active, .clothes.active, .accessories.active, .background.active, .video.active {
+.eyes.active, .headdress.active, .phone.active, .mouth.active, .clothes.active, .accessories.active, .background.active, .video.active, .image-by-user.active {
   display: -ms-grid;
   display: grid;
 }

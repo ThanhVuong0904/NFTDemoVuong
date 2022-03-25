@@ -4,13 +4,11 @@ import { BrowserRouter,  } from "react-router-dom/cjs/react-router-dom.min";
 import Header from "./components/Header";
 import { NFTContext } from "./contexts/NFTContext";
 import Routes from "./routes/Routes";
-import { useState } from "react";
-import axios from "axios";
 
 function App() {
 	const { 
-		authenticate, isAuthenticated, user, isInitialized, web3Api,
-		enableWeb3, account, logout, isWeb3Enabled, isAuthenticating, isUnauthenticated
+		authenticate, isAuthenticated, isInitialized, web3Api,
+		enableWeb3, logout, isWeb3Enabled, 
 	} = useContext(NFTContext);
 	useEffect(() => {
 		if (isInitialized) {
@@ -20,28 +18,11 @@ function App() {
 	}, []);
 
 	useEffect(() => {
-		console.log(web3Api);
-	}, [web3Api])
-
-	useEffect(() => {
 		if (isAuthenticated && !isWeb3Enabled) {
 			enableWeb3();
 		}
-	}, [isAuthenticated]);
+	}, [enableWeb3, isAuthenticated, isWeb3Enabled]);
 
-	const accountsChanged = async () => {
-		console.log("accountsChanged",account);
-		console.log("user",user);
-		await logout()
-	}
-	const chainChanged = async (chainId) => {
-		console.log("chainChanged",web3Api.provider.networkVersion);
-		console.log(chainId);
-	}
-	if(web3Api.provider) {
-		web3Api.provider.on('accountsChanged', accountsChanged);
-		web3Api.provider.on("chainChanged",(chainId) => chainChanged(chainId));
-	}
 	if(!isAuthenticated) {
 		return (
 			<div>
@@ -52,7 +33,7 @@ function App() {
 
 	return (
 		<BrowserRouter>
-			<Header onLogOut={logout} account={account}/>
+			<Header onLogOut={logout} account={web3Api.currentAccount}/>
 			<div id="app">
 				<div className="container">
 					<Routes />

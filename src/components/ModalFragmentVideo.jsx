@@ -70,22 +70,33 @@ export default function ModalFragmentVideo() {
           if(preparingFragNFTVideoInfo.chain === '4') {
                console.log(arrayMetadata);
                const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS)
-               const receipt = await contract.methods.createCollection(arrayMetadata, preparingFragNFTVideoInfo.tokenId).send({from: account})
+               const receipt = await contract.methods.createCollection(
+                    arrayMetadata, preparingFragNFTVideoInfo.tokenId)
+                    .send({from: web3Api.currentAccount})
                console.log(`receipt`,receipt);
           }
           else {
                console.log("token id",preparingFragNFTVideoInfo.tokenId);
                const contract = await new web3Api.web3.eth.Contract(NFTAPI, TOKEN_CONTRACT_ADDRESS_BSC)
-               const receipt = await contract.methods.createCollection(arrayMetadata, preparingFragNFTVideoInfo.tokenId).send({from: account})
+               const receipt = await contract.methods.createCollection(arrayMetadata, preparingFragNFTVideoInfo.tokenId).send({from: web3Api.currentAccount})
                console.log(`receipt video`,receipt);
           }
+     }
+     const handleClose = () => {
+          setShowModalFragmentVideo(false)
+          setPreparingFragNFTVideoInfo({
+               tokenId: null,
+               linkVideo: null,
+               amountFrag: '',
+               duration: ''
+          })
      }
      useEffect(() => {
           console.log(videoBase64Frag);
           console.log(base64VideoAndImage);
      }, [base64VideoAndImage, videoBase64Frag])
      return (
-          <Modal show={showModalFragmentVideo} size='xl'>
+          <Modal show={showModalFragmentVideo} size='xl' onHide={handleClose}>
                <Modal.Header closeButton>
                     <Modal.Title>For Frament Video</Modal.Title>
                </Modal.Header>
@@ -93,13 +104,15 @@ export default function ModalFragmentVideo() {
                     
                     <div className="d-grid grid-col-2 grid-gap-10">
                          <div>
-                              <ReactPlayer 
-                                   controls={true} 
-                                   url={preparingFragNFTVideoInfo.linkVideo} 
-                                   ref={refDuration}
-                                   width='60%%' 
-                                   height='60%%'
-                              />
+                              <div className="height" style={{height: 500}}>
+                                   <ReactPlayer 
+                                        controls={true} 
+                                        url={preparingFragNFTVideoInfo.linkVideo} 
+                                        ref={refDuration}
+                                        width='100%' 
+                                        height='100%'
+                                   />
+                              </div>
                               <p>Token ID{preparingFragNFTVideoInfo.tokenId}</p>
                               <label htmlFor="" className='mt-3 mb-3'>Nhập số lượng phân mảnh</label>
                               <input 
